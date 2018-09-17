@@ -1,0 +1,197 @@
+<template>
+<div  class="warehouse">
+ <div id="header">
+    <div class="left">
+   <i  v-show="isrotate1"  class="fa fa-bars fa-2x fa-rotate-90" aria-hidden="true"  style="color: #606266;"  @click="rotate1()"></i>
+   <i  v-show="isrotate2"  class="fa fa-bars fa-2x " aria-hidden="true"  style="color: #606266;"  @click="rotate2()"></i>
+
+  <el-breadcrumb separator="/" >
+  <el-breadcrumb-item ><a  @click="routeshouye()">首页</a></el-breadcrumb-item>
+  <el-breadcrumb-item><a>订单管理</a></el-breadcrumb-item>
+  <el-breadcrumb-item>仓库列表</el-breadcrumb-item>
+  </el-breadcrumb>
+    </div>
+  <div class="right">
+      <i class="el-icon-rank"  title="全屏"></i>
+      <el-dropdown class="faceAndMenu">
+        <span class="el-dropdown-link">
+          <div class="face">
+            <i class="iconfont icon-user"></i>
+          </div>
+          <span class="username">sdfsdfsdf</span>
+        </span>
+        <el-dropdown-menu slot="dropdown">
+          <el-dropdown-item command="center"><router-link tag="li" to="adminadd">个人中心</router-link></el-dropdown-item>
+          <el-dropdown-item command="logout"><a  @click="logout()">退出登录</a></el-dropdown-item>
+        </el-dropdown-menu>
+      </el-dropdown>
+    </div>
+  </div>
+<el-row>
+  <el-col :span="3" v-for="index in tableData"  :offset="index > 0 ? 0 : 0" style="cursor:poiner" >
+    <el-card :body-style="{ padding: '0px' }" shadow="hover"  >
+      <img :src="index.image_thumb" class="image"  style="height:210px"  @click="checkorder(index.id)" >
+      <div style="padding: 14px;cursor:pointer"  @click="checkorder(index.id)">
+        <span>{{index.name}}</span>
+        <div class="bottom clearfix">
+          <el-button type="text" class="button" @click="checkorder(index.id)">查看订单</el-button>
+        </div>
+      </div>
+    </el-card>
+  </el-col>
+</el-row>
+</div>
+</template>
+<script>
+export default {
+    data(){
+return{
+ 
+  tableData:[
+
+      ],
+isrotate1:false,
+isrotate2:true,
+checkorder(id){
+sessionStorage.setItem('offlineid',id);
+ this.$router.push({
+    path:'orderlist'
+  })
+}
+
+}
+    },methods:{
+      logout(){
+      sessionStorage.clear() 
+      this.$router.push({  
+           path:'/',
+          });
+      },
+      routeshouye(){
+        this.$router.push({
+           path:'match',
+          });
+      },
+      rotate1(){//打开侧边栏
+      this.isrotate1=false;//使旋转的消失
+      this.isrotate2=true;//使不旋转的出现
+      },
+      rotate2(){//收起侧边栏
+      this.isrotate2=false;
+      this.isrotate1=true;
+      },
+      getdata(){
+        var vm=this; 
+        vm.$http.post('http://192.168.0.89:3300/web',{
+            cmd:"getOfflineList",
+            data:JSON.stringify({
+            account:sessionStorage.getItem('account'),
+            sessionid:sessionStorage.getItem('sessionid'),
+         })
+         }).then((res)=>{
+        vm.tableData=res.data.result.list;
+        }).catch(function(err){
+        console.log(err); 
+          });
+      },
+    },mounted(){
+
+      this.getdata();
+    }
+    
+}
+</script>
+
+<style scoped>
+.warehouse{
+
+ 
+}
+#header .icon, #header .left .icon-menu, #header .right .el-icon-rank {
+    font-size: 24px;
+    transition: 0.2s all ease-in-out;
+    cursor: pointer;
+    color: #606266;
+}
+.fa{
+  cursor: pointer;
+}
+.fa:hover{
+  /* color:red; */
+}
+.icon-menu:before {
+    content: "\e7f4";
+}
+
+
+#header{
+   display: -ms-flexbox;
+    display: flex;
+    -ms-flex-align: center;
+    align-items: center;
+    -ms-flex-pack: justify;
+    justify-content: space-between;
+    height: 60px;
+    display: flex;
+    box-shadow: 0 2px 1px 1px rgba(100,100,100,0.1);
+    padding: 0 20px;
+
+}
+#header>div {
+    
+    display: flex;
+    align-items: center;
+}
+.right{
+    float: right;
+}
+.el-dropdown-menu{
+    cursor: pointer;
+}
+.left{
+line-height: 60px;
+    float: left;
+}
+.el-breadcrumb{
+    margin-left: 30px;
+}
+
+.username{
+  cursor:pointer;
+}
+.el-row{
+
+  padding-left: 20px;
+}
+.el-col{
+
+    margin-right:30px;
+    margin-top:30px;
+
+  }
+.bottom {
+    margin-top: 13px;
+    margin-bottom: 13px;
+    line-height: 12px;
+  }
+.button {
+    padding: 0;
+    float: right;
+  }
+
+.image {
+    width:100%;
+    height:100%;
+    cursor:pointer;
+  }
+
+.clearfix:before,
+ 
+  
+.clearfix:after {
+      clear: both
+  }
+
+
+  
+</style>
