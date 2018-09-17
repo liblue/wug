@@ -9,14 +9,13 @@
 			<input type="password" v-model="form.password"   placeholder="密码">
 	    </form>
 	    <div class="forgot">
-	    	<a href="#">忘记密码sss</a>
+	    	<a href="#">忘记密码</a>
 	    	<input type="submit" value="登录"  @click="submitForm()" >
 	    </div>
 	</div>
 </div>	
 </div>
 </template>
-
 <script>
   export default {
     data() {
@@ -25,7 +24,6 @@
           account:'',
           password:'',
      },
-   
       }
     },methods:{
     submitForm(){
@@ -38,14 +36,21 @@
              password:vm.form.password,
          })
           }).then((res)=>{
+            if(res.data.result.status==100){
              sessionStorage.setItem('sessionid',res.data.result.sessionid);
+             vm.$router.push({
+             path:'/manage',
+          });
+          }else{
+             vm.$message({
+             message: '登录失败',
+             type: 'error',
+             duration:'1000'
+        });
+          }
         }).catch(function(err){
          console.log(err);
           });
-         this.$router.push({
-           path:'/manage',
-          });
-
     },
    
       

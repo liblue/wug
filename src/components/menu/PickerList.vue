@@ -6,7 +6,7 @@
     <i  v-show="isrotate2"  class="fa fa-bars fa-2x " aria-hidden="true"  style="color: #606266;"  @click="rotate2()"></i>
   <el-breadcrumb separator="/" >
   <el-breadcrumb-item ><a  @click="routeshouye()">首页</a></el-breadcrumb-item>
-  <el-breadcrumb-item><a>拣货员管理</a></el-breadcrumb-item>
+  <el-breadcrumb-item><a>用户管理</a></el-breadcrumb-item>
   <el-breadcrumb-item>拣货员列表</el-breadcrumb-item>
   </el-breadcrumb>
     </div>

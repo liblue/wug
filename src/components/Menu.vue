@@ -11,25 +11,18 @@
       active-text-color="#2d8cf0"  class="el-menu-vertical-demo" @open="handleOpen" @close="handleClose" :collapse="isCollapse" unique-opened>
       <el-submenu  v-for="item in menulist"  :index="item.index" >
         <template slot="title">
-        
-
           <i :class="item.icon"></i>
           <span>{{item.title}}</span>
         </template>
          <el-menu-item v-for="it in item.menu"  :index="it.index" @click="choose(it.url,item.title,it.title)">{{it.title}}</el-menu-item>
      </el-submenu>
-
      <el-menu-item  v-for="item in othermenu"  :index="item.index"  @click="choose(item.url,item.title)">
         <i :class="item.icon"></i>
         <span slot="title">{{item.title}}</span>
       </el-menu-item>
-    
-
- 
 </el-menu>
 </div>
 </template>
-
 <style  scoped>
   .el-menu-vertical-demo:not(.el-menu--collapse) {
     width: 200px;
@@ -58,85 +51,45 @@ import bus from '../assets/eventBus';  //传值组件 中转站
           menulist:[
         {
           index: 1,
-          title: '管理员管理',
-          icon:'fa fa-bar-chart',
-          isOpened:true,
-          menu: [
-           {'index':'1-1','title':'管理员列表','url':'/adminlist'},
-           {'index':'1-2','title':'添加管理员','url':'/adminadd'},
-           ]
-        },
-         {
-          index: 2,
-          title: '导航2',
-          icon:'el-icon-tickets',
-          open:'no',
-          menu: [
-            {'index':'2-1','title':'选项1','url':'/shouye'},
-            {'index':'2-2','title':'选项2','url':'/shouye'},
-            {'index':'2-3','title':'选项3','url':'/shouye'}
-            ]
-        },
-        {
-          index: 3,
           title: '订单管理',
           icon:'el-icon-tickets',
           open:'no',
           menu: [
-            {'index':'3-1','title':'订单列表','url':'/warehouse'},
-           
-            {'index':'3-2','title':'选项3','url':'/shouye'}
+            {'index':'1-1','title':'订单列表','url':'/warehouse'},
+            {'index':'1-2','title':'选项3','url':'/shouye'}
             ]
         },
         {
-          index: 4,
-          title: '拣货员管理',
+          index: 2,
+          title: '用户管理',
           icon:'fa fa-user-o',
           open:'no',
           menu: [
-            {'index':'4-1','title':'拣货员列表','url':'/pickerlist'},
-            {'index':'4-2','title':'增加拣货员','url':'/pickerlist'},
-            {'index':'4-3','title':'选项3','url':'/shouye'}
-            ]
-        },
-         {
-          index: 5,
-          title: '配送员管理',
-          icon:'el-icon-tickets',
-          open:'no',
-          menu: [
-            {'index':'5-1','title':'配送员列表','url':'riderlist'},
-            {'index':'5-2','title':'选项3','url':'/shouye'}
+            {'index':'2-1','title':'拣货员列表','url':'/pickerlist'},
+            {'index':'2-2','title':'配送员列表','url':'/riderlist'},
+            {'index':'2-3','title':'待审核列表','url':'/check'},
             ]
         },
         {
-          index: 6,
+          index: 3,
           title: '图表',
-          icon:'el-icon-tickets',
+          icon:'fa fa-bar-chart',
           open:'no',
           menu: [
-            {'index':'6-1','title':'订单统计图','url':'/chart'},
-            {'index':'6-2','title':'拣货员统计图','url':'/chart'},
-            {'index':'6-3','title':'配送员统计图','url':'/chart'}
+            {'index':'3-1','title':'订单统计图','url':'/chart'},
+            {'index':'3-2','title':'拣货员统计图','url':'/chart'},
+            {'index':'3-3','title':'配送员统计图','url':'/chart'}
 
             ]
         },
       ],
       othermenu:[
         {
-          index:6,
-          title:'待审核',
-          icon:'el-icon-tickets',
-          open:'no',
-          url:'check',
-        },
-        {
           index:7,
           title:'图表',
           icon:'el-icon-picture',
           open:'no',
           url:'chart',
-
         },
         {
           index:8,
@@ -173,11 +126,10 @@ import bus from '../assets/eventBus';  //传值组件 中转站
     },
     methods: {
       fun(){
-
         if(this.isCollapse){
-this.isCollapse=false;
+        this.isCollapse=false;
         }else{
-this.isCollapse=true;
+         this.isCollapse=true;
         }
       },
       handleOpen(key, keyPath) {
@@ -187,7 +139,6 @@ this.isCollapse=true;
         console.log(key, keyPath);
       },
       choose(url,place1,place2){
-
       bus.$emit('chooseMenu',{'place1':place1,'place2':place2,'nav1':false,'nav2':true});
         this.$router.push({
            path:url,

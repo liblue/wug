@@ -26,26 +26,20 @@
     </div>
   </div>
   <div class="tablelist"> 
-   <el-form :model="form" label-width="80px"  class="sousuo">
-   <el-form-item label="活动名称">
+   <el-form :model="form" label-width="100px"  class="sousuo">
+   <el-form-item label="待审核昵称">
        <el-col :span="25">
-    <el-input v-model="form.name"  ></el-input>
+    <el-input v-model="form.nick"  placeholder="请输入昵称"></el-input>
        </el-col>
   </el-form-item>
-  <el-form-item label="活动区域">
-    <el-select v-model="form.type" placeholder="请选择活动区域">
-      <el-option label="区域一" value="shanghai"></el-option>
-      <el-option label="区域二" value="beijing"></el-option>
-    </el-select>
-  </el-form-item>
-  <el-form-item label="活动时间" style="width:25%">
-    <el-col :span="11">
-      <el-date-picker type="date" placeholder="选择日期" v-model="form.date1" ></el-date-picker>
-    </el-col>
-    <el-col class="line" :span="2">-</el-col>
-    <el-col :span="11">
-      <el-time-picker type="fixed-time" placeholder="选择时间" v-model="form.date2" ></el-time-picker>
-    </el-col>
+   <el-form-item label="起始时间" style="width:25%">
+   <el-date-picker
+      v-model="soudate"
+      type="daterange"
+      start-placeholder="开始日期"
+      end-placeholder="结束日期"
+      :default-time="['00:00:00', '23:59:59']">
+    </el-date-picker>
   </el-form-item>
   <el-form-item class="sousuo">
     <el-button type="primary" @click="onSubmit">搜索</el-button>
@@ -86,14 +80,14 @@
           :type="scope.row.type === '家' ? 'primary' : 'success'"
           disable-transitions>{{scope.row.type}}</el-tag>
       </template>
-    </el-table-column>
+     </el-table-column>
      <el-table-column label="操作" width="280">
       <template slot-scope="scope">
         <el-button
           size="mini"
           type="danger"
           @click="handleDelete(scope.$index, scope.row)">删除</el-button>
-           <el-button
+        <el-button
           size="mini"
           type="primary"
           @click="handleShenhe(scope.$index, scope.row)">审核</el-button>
@@ -130,7 +124,6 @@
       </el-select>
       <span class="tip"> </span>
     </el-form-item > 
-  
   </el-form>
   <div slot="footer" class="dialog-footer">
     <!-- <el-button @click="editVisible = false">取 消</el-button> -->
@@ -152,41 +145,12 @@
         isrotate2:true,
         form:{
         },
-        sousuocondi:{},
+        soudate:[],
+        soucondi:{},
         row:{},
         tableData: [
-          {id:1,nick:"小红222222",account:"222aa",avatar:"11111111111",type:"1",createtime:"素履之往"},
-          {id:2,nick:"小红",account:"aaa3333aaa",avatar:"11111111111",type:"1",createtime:"素履之往"},
-          {id:3,nick:"小红",account:"aa455aaaa",avatar:"11111111111",type:"1",createtime:"素履之往"},
-          {id:4,nick:"小红",account:"aaa4aaa",avatar:"11111111111",type:"1",createtime:"素履之往"},
-          {id:5,nick:"小红",account:"aaaa666aa",avatar:"11111111111",type:"1",createtime:"素履之往"},
-          {id:6,nick:"小红",account:"aaaa777aa",avatar:"11111111111",type:"1",createtime:"素履之往"},
-          {id:7,nick:"小红",account:"aaaaaa",avatar:"11111111111",type:"1",createtime:"素履之往"},
-          {id:8,nick:"小红",account:"aaaaaa",avatar:"11111111111",type:"1",createtime:"素履之往"},
-          {id:9,nick:"小红",account:"aaaaaa",avatar:"11111111111",type:"1",createtime:"素履之往"},
-          {id:12,nick:"小红",account:"aaaaaa",avatar:"11111111111",type:"1",createtime:"素履之往"},
-          {id:13,nick:"小红",account:"aaaaaa",avatar:"11111111111",type:"1",createtime:"素履之往"},
-          {id:14,nick:"小红",account:"aaaaaa",avatar:"11111111111",type:"1",createtime:"素履之往"},
-          {id:10,nick:"小红",account:"aaaaaa",avatar:"11111111111",type:"1",createtime:"素履之往"},
-          {id:15,nick:"小红",account:"aaaaaa",avatar:"11111111111",type:"1",createtime:"素履之往"},
-          {id:16,nick:"小红",account:"aaaaaa",avatar:"11111111111",type:"1",createtime:"素履之往"},
         ],
         tableData1:[
-          {id:1,nick:"小红",account:"aaaaaa",avatar:"11111111111",type:"1",createtime:"素履之往"},
-          {id:2,nick:"小红",account:"aaaaaa",avatar:"11111111111",type:"1",createtime:"素履之往"},
-          {id:3,nick:"小红",account:"aaaaaa",avatar:"11111111111",type:"1",createtime:"素履之往"},
-          {id:4,nick:"小红",account:"aaaaaa",avatar:"11111111111",type:"1",createtime:"素履之往"},
-          {id:5,nick:"小红",account:"aaaaaa",avatar:"11111111111",type:"1",createtime:"素履之往"},
-          {id:6,nick:"小红",account:"aaaaaa",avatar:"11111111111",type:"1",createtime:"素履之往"},
-          {id:7,nick:"小红",account:"aaaaaa",avatar:"11111111111",type:"1",createtime:"素履之往"},
-          {id:8,nick:"小红",account:"aaaaaa",avatar:"11111111111",type:"1",createtime:"素履之往"},
-          {id:9,nick:"小红",account:"aaaaaa",avatar:"11111111111",type:"1",createtime:"素履之往"},
-          {id:12,nick:"小红",account:"aaaaaa",avatar:"11111111111",type:"1",createtime:"素履之往"},
-          {id:13,nick:"小红",account:"aaaaaa",avatar:"11111111111",type:"1",createtime:"素履之往"},
-          {id:14,nick:"小红",account:"aaaaaa",avatar:"11111111111",type:"1",createtime:"素履之往"},
-          {id:10,nick:"小红",account:"aaaaaa",avatar:"11111111111",type:"1",createtime:"素履之往"},
-          {id:15,nick:"小红",account:"aaaaaa",avatar:"11111111111",type:"1",createtime:"素履之往"},
-          {id:16,nick:"小红",account:"aaaaaa",avatar:"11111111111",type:"1",createtime:"素履之往"},
         ],
         offlist:[],
         userinfo:{},
@@ -226,19 +190,33 @@
         return row[property] === value;
       },
       handleDelete:function(index,rows){
+        this.userinfo=rows;  
         this.idx = index;
         this.delVisible=true;
       },
       handleShenhe(index,rows){
-        this.userinfo.account=rows.account;
+        this.userinfo=rows;  
         this.idx = index;
         this.editVisible=true;
+       
+        if(!this.offlist.length<1){
+          console.log('空的');
+          // alert(34);
+          this.getofflist();
+        }else{
+           console.log('不为空');
+           console.log(this.offlist.length);
+           console.log('打印');
+           this.getofflist();
+        }
+        console.log('12111111111111111111111111');
       },
       shenhequxiao(){
         this.userinfo.offid='';
         this.editVisible=false;
       },
       shenhe(type){//逻辑实现
+     
         if(!this.userinfo.offid){   
            this.$message({
            message: '请选择网点',
@@ -247,11 +225,9 @@
         }); 
           return false;
         }
+        alert(this.userinfo.offid);
         this.editVisible=false;
-      
-
         var vm=this; 
-       
         vm.$http.post('http://192.168.0.89:3300/web',{
             cmd:"userVerify",
             data:JSON.stringify({
@@ -276,29 +252,92 @@
           });
           this.userinfo.offid='';
       },
-      getdata(){
-        // var vm=this; 
-        // vm.$http.post('http://192.168.0.89:3300/web',{
-        //     cmd:"getUserList",
-        //     data:JSON.stringify({
-        //     sessionid:sessionStorage.getItem('sessionid'),
-        //     account:sessionStorage.getItem('account'),
-        //     type:0,
-        //     usable:0
-        //  })
-        //  }).then((res)=>{
-        // console.log(res.data.cmd);
-        // console.log(res.data.result.status);
-        // console.log(res.data.result.users);
+     
+      // axios1() {//获取待审核人员列表和网点信息
+      //    var vm=this; 
+      //    var obj={
+      //       userlist:vm.$http.post('http://192.168.0.89:3300/web',{
+      //       cmd:"getUserList",
+      //       data:JSON.stringify({
+      //       sessionid:sessionStorage.getItem('sessionid'),
+      //       account:sessionStorage.getItem('account'),
+      //       type:0,
+      //       usable:0
+      //    })
+      //    }),
+      //       offlist:vm.$http.post('http://192.168.0.89:3300/web',{
+      //       cmd:"getOfflineList",
+      //       data:JSON.stringify({
+      //       account:sessionStorage.getItem('account'),
+      //       sessionid:sessionStorage.getItem('sessionid'),
+      //    })
+      //    })
 
-        // console.log('待审核');
-        // vm.tableData=res.data.result.users;
-        // vm.tableData1=res.data.result.users;
-        // vm.total=res.data.result.users.length;
-        // vm.tableData=vm.tableData.slice(0,this.pageSize);
-        // }).catch(function(err){
-        // console.log(err);
-        //   });
+      //    };
+      //   return  obj;
+      // },
+    //  axios2() {//获取网点列表
+    //     var vm=this; 
+    //     return vm.$http.post('http://192.168.0.89:3300/web',{
+    //         cmd:"getOfflineList",
+    //         data:JSON.stringify({
+    //         account:sessionStorage.getItem('account'),
+    //         sessionid:sessionStorage.getItem('sessionid'),
+    //      })
+    //      });
+    //  },
+  //     getdata(){
+  //       var vm=this; 
+  //       vm.$http.all([vm.axios1().userlist,vm.axios1().offlist]).then(vm.$http.spread(function (res,lateres) {
+  //           console.log(vm.offlist);
+  //         console.log('请求');
+  //         console.log(res);
+  //         console.log('请求1');
+  //         console.log(lateres);
+  //       vm.tableData=res.data.result.users;
+  //       vm.tableData1=res.data.result.users;
+  //       vm.total=res.data.result.users.length;
+  //       vm.tableData=vm.tableData.slice(0,vm.pageSize);
+  //       vm.offlist=lateres.data.result.list;
+        
+  //       // 两个请求现在都执行完成
+  // }));
+  //     },
+      soudata(){
+        var vm=this; 
+        vm.$http.get('http://www.wug.com/api/userlist',{
+           params: vm.soucondi
+         }).then((res)=>{
+        vm.tableData=res.data.data;
+        vm.tableData1=res.data.data;
+        vm.total=res.data.data.length;
+        vm.tableData=vm.tableData.slice(0,this.pageSize);
+        }).catch(function(err){
+        console.log(err);
+          });
+      },
+      getdata(){
+        var vm=this; 
+        vm.$http.post('http://192.168.0.89:3300/web',{
+            cmd:"getUserList",
+            data:JSON.stringify({
+            sessionid:sessionStorage.getItem('sessionid'),
+            account:sessionStorage.getItem('account'),
+            type:0,
+            usable:0
+         })
+         }).then((res)=>{
+        console.log(res.data.cmd);
+        console.log(res.data.result.status);
+        console.log(res.data.result.users);
+        console.log('待审核');
+        vm.tableData=res.data.result.users;
+        vm.tableData1=res.data.result.users;
+        vm.total=res.data.result.users.length;
+        vm.tableData=vm.tableData.slice(0,this.pageSize);
+        }).catch(function(err){
+        console.log(err);
+          });
       },
       getofflist(){
         var vm=this; 
@@ -310,6 +349,8 @@
          })
          }).then((res)=>{
         vm.offlist=res.data.result.list;
+        console.log(res.data.result.list);
+        console.log('网点列表');
         }).catch(function(err){
         console.log(err); 
           });
@@ -343,13 +384,21 @@
            path:'/shouye',
           });
       },
-      onSubmit(){
-        this.getdata();
+      onSubmit(){//提交搜索条件
+        this.soucondi.nick=this.form.nick;
+        this.soucondi.date1=this.soudate[0];
+        this.soucondi.date2=this.soudate[1];
+        this.soucondi.type=0;
+        this.soucondi.userable=0;
+        this.soudata();
       },
+
     },
       mounted(){
+
+    },
+      created(){
       this.getdata()
-      this.getofflist();
     }
   }
 </script>
@@ -362,12 +411,11 @@
     cursor: pointer;
     color: #606266;
 }
-
 .icon-menu:before {
     content: "\e7f4";
 }
 #header{
-  display: -ms-flexbox;
+    display: -ms-flexbox;
     display: flex;
     -ms-flex-align: center;
     align-items: center;
@@ -378,10 +426,8 @@
     box-shadow: 0 2px 1px 1px rgba(100,100,100,0.1);
     padding: 0 20px;
     margin-bottom:10px; 
-
 }
 #header>div {
-    
     display: flex;
     align-items: center;
 }
@@ -412,7 +458,5 @@
 .username{
   cursor: pointer;
 }
-.tip{
- coler:red;
-}
+
 </style>

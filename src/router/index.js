@@ -2,16 +2,13 @@ import Vue from 'vue'
 import Router from 'vue-router'
 import Layout from '@/components/Layout'
 
-import Index from '../components/menu/Index'
-import Shop  from '../components/Shop'
+
 import Login  from '../components/Login'
 
-
-import AdminList from '../components/menu/AdminList'
-import AdminAdd from '../components/menu/AdminAdd'
+import Index      from '../components/menu/Index'
+import AdminInfo  from '../components/menu/AdminInfo'
 import PickerList from '../components/menu/PickerList'
 import RiderList  from '../components/menu/RiderList'
-import Or_pkerAdd from '../components/menu/Or_pkerAdd'
 import OrderList  from '../components/menu/OrderList'
 import Check      from '../components/menu/Check'
 import TestLogin  from '../components/menu/TestLogin'
@@ -51,21 +48,11 @@ export default new Router({
                name:'shouye',
          　　　 component: Index
         　　  },
-        　    { 
-          　　　path: '/adminlist', 
-                name:'adminlist',
-           　　 component: AdminList
-          　　},
               { 
             　　　path: '/adminadd', 
                   name:'adminadd',
-             　　 component: AdminAdd
+             　　 component: AdminInfo
               },
-                { 
-            　　 path: '/shop', 
-                 name:'shop',
-             　　component: Shop
-            　　  },
                { 
               　　path: '/pickerlist', 
                 name:'pickerlist',
@@ -88,11 +75,6 @@ export default new Router({
               },
             ]
               },
-               { 
-                path: '/or_pkeradd', 
-              name:'or_pikeradd',
-              component:  Or_pkerAdd
-                　　  },
                 { 
                   path: '/orderlist', 
                   name:'orderlist',

@@ -32,11 +32,7 @@
 <!-- 表单 -->
   <div class="form-group">
       <el-form :model="ruleForm2" status-icon :rules="rules2" ref="ruleForm2" label-width="100px" class="demo-ruleForm">
-
-    <el-form-item label="账号" prop="account">
-    <el-input v-model="ruleForm2.account"></el-input>
-  </el-form-item>
-  <el-form-item label="密码" prop="pass">
+  <el-form-item label="新密码" prop="pass">
     <el-input type="password" v-model="ruleForm2.pass" autocomplete="off"></el-input>
   </el-form-item>
   <el-form-item label="确认密码" prop="checkPass">
@@ -44,7 +40,7 @@
   </el-form-item>
  
   <el-form-item>
-    <el-button type="primary" @click="submitForm('ruleForm2')">提交</el-button>
+    <el-button type="primary" @click="submitForm('ruleForm2')">修改</el-button>
     <el-button @click="resetForm('ruleForm2')">重置</el-button>
   </el-form-item>
 </el-form>
@@ -58,19 +54,6 @@
 <script>
 export default {
     data(){
-        var checkAge = (rule, value, callback) => {
-        if (!value) {
-          return callback(new Error('账号不能为空'));
-        }
-        setTimeout(() => {
-            if (value < 18) {
-              callback(new Error('必须年满18岁'));
-            } else {
-              callback();
-            }
-         
-        }, 1000);
-      };
       var validatePass = (rule, value, callback) => {
         if (value === '') {
           callback(new Error('请输入密码'));
@@ -97,7 +80,6 @@ export default {
        ruleForm2: {
           pass: '',
           checkPass: '',
-          account: ''
         },
         rules2: {
           pass: [
@@ -106,9 +88,6 @@ export default {
           checkPass: [
             { validator: validatePass2, trigger: 'blur' }
           ],
-          account: [
-            { validator: checkAge, trigger: 'blur' }
-          ]
         }}
     },methods:{
       routeshouye(){
@@ -133,9 +112,8 @@ export default {
       submitForm(formName) {
         this.$refs[formName].validate((valid) => {
           if (valid) {
-            this.regist();
+            this.adminEditPass();
           } else {
-            console.log('error submit!!');
             return false; 
           }
         });
@@ -143,20 +121,21 @@ export default {
       resetForm(formName) {
         this.$refs[formName].resetFields();
       },
-      regist() {
+      adminEditPass() {
        var vm=this;
        vm.$http.post('http://192.168.0.89:3300/web',{
-         cmd:"adminRegist",
+         cmd:"adminEditPass",
          data:JSON.stringify({
-             account:vm.ruleForm2.account,
-             password:vm.ruleForm2.pass,
+             account:sessionStorage.getItem('account'),
+             sessionid:sessionStorage.getItem('sessionid'),
+             new_password:vm.ruleForm2.pass,
          })
           }).then((res)=>{
              this.$message.success('添加成功');
              this.resetForm('ruleForm2');
              alert(res.data.cmd);
         }).catch(function(err){
-        console.log(err);
+         console.log(err);
           });
       },
     
@@ -167,7 +146,6 @@ export default {
 </script>
 
 <style scoped>
-
 #header .icon, #header .left .icon-menu, #header .right .el-icon-rank {
     font-size: 24px;
     transition: 0.2s all ease-in-out;

@@ -3,11 +3,11 @@
    <el-form :model="form" label-width="80px"  class="sousuo">
    <el-form-item label="用户昵称">
        <el-col :span="25">
-    <el-input v-model="form.name"  ></el-input>
+    <el-input v-model="form.nick"  placeholder="请输入昵称"></el-input>
        </el-col>
   </el-form-item>
   <el-form-item label="选择网点">
-    <el-select v-model="soucon.offid" placeholder="请选择活动区域">
+    <el-select v-model="form.offid" placeholder="请选择活动区域">
       <el-option :label="item.name" :value="item.id"  v-for="item in offlist" ></el-option>
     </el-select>
   </el-form-item>
@@ -22,7 +22,7 @@
   </el-form-item>
 
   <el-form-item class="sousuo">
-    <el-button type="primary" @click="onSubmit">搜索拣货员</el-button>
+    <el-button type="primary" @click="onSubmit">搜索</el-button>
   </el-form-item>
 </el-form>
  <el-table
@@ -115,41 +115,11 @@
         form:{
         },
         soudate:[],
-        sousuocondi:{},
+        soucondi:{},
         row:{},
         tableData: [
-          {id:1,nick:"小dd红",account:"222aaaaaa",avatar:"11111111111",type:"1",createtime:"素履之往"},
-          {id:2,nick:"小add红",account:"aaa333aaa",avatar:"11111111111",type:"1",createtime:"素履之往"},
-          {id:3,nick:"小a红",account:"aaaa444aa",avatar:"11111111111",type:"1",createtime:"素履之往"},
-          {id:4,nick:"小红",account:"aaaa23aa",avatar:"11111111111",type:"1",createtime:"素履之往"},
-          {id:5,nick:"小红",account:"aaaaaa",avatar:"11111111111",type:"1",createtime:"素履之往"},
-          {id:6,nick:"小红",account:"aaaaaa",avatar:"11111111111",type:"1",createtime:"素履之往"},
-          {id:7,nick:"小红",account:"aaaaaa",avatar:"11111111111",type:"1",createtime:"素履之往"},
-          {id:8,nick:"小红",account:"aaaaaa",avatar:"11111111111",type:"1",createtime:"素履之往"},
-          {id:9,nick:"小红",account:"aaaaaa",avatar:"11111111111",type:"1",createtime:"素履之往"},
-          {id:12,nick:"小红",account:"aaaaaa",avatar:"11111111111",type:"1",createtime:"素履之往"},
-          {id:13,nick:"小红",account:"aaaaaa",avatar:"11111111111",type:"1",createtime:"素履之往"},
-          {id:14,nick:"小红",account:"aaaaaa",avatar:"11111111111",type:"1",createtime:"素履之往"},
-          {id:10,nick:"小红",account:"aaaaaa",avatar:"11111111111",type:"1",createtime:"素履之往"},
-          {id:15,nick:"小红",account:"aaaaaa",avatar:"11111111111",type:"1",createtime:"素履之往"},
-          {id:16,nick:"小红",account:"aaaaaa",avatar:"11111111111",type:"1",createtime:"素履之往"},
         ],
         tableData1:[
-           {id:1,nick:"小红",account:"aaaaaa",avatar:"11111111111",type:"1",createtime:"素履之往"},
-          {id:2,nick:"小红",account:"aaaaaa",avatar:"11111111111",type:"1",createtime:"素履之往"},
-          {id:3,nick:"小红",account:"aaaaaa",avatar:"11111111111",type:"1",createtime:"素履之往"},
-          {id:4,nick:"小红",account:"aaaaaa",avatar:"11111111111",type:"1",createtime:"素履之往"},
-          {id:5,nick:"小红",account:"aaaaaa",avatar:"11111111111",type:"1",createtime:"素履之往"},
-          {id:6,nick:"小红",account:"aaaaaa",avatar:"11111111111",type:"1",createtime:"素履之往"},
-          {id:7,nick:"小红",account:"aaaaaa",avatar:"11111111111",type:"1",createtime:"素履之往"},
-          {id:8,nick:"小红",account:"aaaaaa",avatar:"11111111111",type:"1",createtime:"素履之往"},
-          {id:9,nick:"小红",account:"aaaaaa",avatar:"11111111111",type:"1",createtime:"素履之往"},
-          {id:12,nick:"小红",account:"aaaaaa",avatar:"11111111111",type:"1",createtime:"素履之往"},
-          {id:13,nick:"小红",account:"aaaaaa",avatar:"11111111111",type:"1",createtime:"素履之往"},
-          {id:14,nick:"小红",account:"aaaaaa",avatar:"11111111111",type:"1",createtime:"素履之往"},
-          {id:10,nick:"小红",account:"aaaaaa",avatar:"11111111111",type:"1",createtime:"素履之往"},
-          {id:15,nick:"小红",account:"aaaaaa",avatar:"11111111111",type:"1",createtime:"素履之往"},
-          {id:16,nick:"小红",account:"aaaaaa",avatar:"11111111111",type:"1",createtime:"素履之往"},
         ],
         soucon:{},
         offlist:[],
@@ -159,7 +129,7 @@
         msg:"",
         delarr:[],
         multipleSelection:[],
-        total:80,//总数  每次删除后要修改
+        total:10,//总数  每次删除后要修改
         pageSize:10,//默认每页的数量
         currentPage:1,//当前页
         formLabelWidth: '80px' ,
@@ -191,43 +161,115 @@
         this.tableData=this.tableData1;
         this.tableData=this.tableData.slice((this.currentPage-1)*this.pageSize,this.currentPage*this.pageSize);
       },
-      handleJin(){
-      this.jinVisible=true;
+      handleJin(index,rows){
+        this.userinfo=rows;     
+        this.jinVisible=true;
       },
       handleDelete:function(index,rows){//打开删除弹窗
         this.idx = index;
+        this.userinfo=rows; 
         this.delVisible=true;
       },
       jinYong(){
-        this.jinVisible=false;
-        this.tableData.splice(this.idx, 1);
+        this.jinVisible=false;//关闭弹出框
+        var vm=this; 
+        vm.$http.post('http://192.168.0.89:3300/web',{
+            cmd:"userDisable",
+            data:JSON.stringify({
+            account:sessionStorage.getItem('account'),
+            sessionid:sessionStorage.getItem('sessionid'),
+            user_account:vm.userinfo.account,
+         })
+         }).then((res)=>{
+           console.log('禁用中');
+           console.log(res);
+           vms.$message({
+               message: '已禁用',
+               type: 'success',
+               duration:'1000'
+         });
+        }).catch(function(err){
+        console.log(err); 
+          });
+      this.tableData.splice(this.idx, 1);
       },
       deleteRow(){//逻辑实现删除一行
-        this.tableData.splice(this.idx, 1);
-        this.$message({
-           message: '已删除',
-           type: 'success',
-           duration:'1000'
-        });
-        this.total=this.total-1;//每次删除后总条数减1，
         this.delVisible = false;
+        var vm=this; 
+        vm.$http.post('http://192.168.0.89:3300/web',{
+            cmd:"userDelete",
+            data:JSON.stringify({
+            account:sessionStorage.getItem('account'),
+            sessionid:sessionStorage.getItem('sessionid'),
+            user_account:vm.userinfo.account,
+         })
+         }).then((res)=>{
+           console.log('禁用中');
+           console.log(res);
+           vms.$message({
+               message: '已删除',
+               type: 'success',
+               duration:'1000'
+         });
+        }).catch(function(err){
+         console.log(err); 
+          });
+        this.total=this.total-1;//每次删除后总条数减1，
+        this.tableData.splice(this.idx, 1);
       },
 
-      getofflist(){
-       var vm=this; 
-        vm.$http.post('http://192.168.0.89:3300/web',{
+      // getofflist(){
+      //  var vm=this; 
+      //   vm.$http.post('http://192.168.0.89:3300/web',{
+      //       cmd:"getOfflineList",
+      //       data:JSON.stringify({
+      //       account:sessionStorage.getItem('account'),
+      //       sessionid:sessionStorage.getItem('sessionid'),
+            
+      //    })
+      //    }).then((res)=>{
+      //   vm.offlist=res.data.result.list;
+      //   }).catch(function(err){
+      //   console.log(err); 
+      //     });
+      // },
+       axios1() {//获取待审核人员列表和网点信息
+         var vm=this; 
+         var obj={
+            userlist:vm.$http.get('http://www.wug.com/api/userlist',{
+              params:{
+                type:1,
+                usable:1
+              }
+         }),
+            offlist:vm.$http.post('http://192.168.0.89:3300/web',{
             cmd:"getOfflineList",
             data:JSON.stringify({
             account:sessionStorage.getItem('account'),
             sessionid:sessionStorage.getItem('sessionid'),
          })
-         }).then((res)=>{
-        vm.offlist=res.data.result.list;
-        }).catch(function(err){
-        console.log(err); 
-          });
+         })
+         };
+        return  obj;
       },
-      getdata(){//获取表格数据
+           getdata(){
+        var vm=this; 
+        vm.$http.all([vm.axios1().offlist,vm.axios1().userlist]).then(vm.$http.spread(function (lateres,res,) {
+          console.log(vm.offlist);
+          console.log('请求');
+          console.log(res);
+          console.log('请求1');
+          console.log(lateres);
+        vm.tableData=res.data.data;
+        vm.tableData1=res.data.data;
+        vm.total=res.data.data.length;
+        vm.tableData=vm.tableData.slice(0,vm.pageSize);
+        vm.offlist=lateres.data.result.list;
+        
+        // 两个请求现在都执行完成
+    }));
+      },
+      // getdata(){//获取表格数据
       //   var vm=this; 
       //   vm.$http.post('http://192.168.0.89:3300/web',{
       //       cmd:"getUserList",
@@ -238,24 +280,43 @@
       //       usable:1
       //    })
       //    }).then((res)=>{
-      //   console.log(res.data.data);
       //   vm.tableData=res.data.result.users;
       //   vm.tableData1=res.data.result.users;
-      //   vm.total=res.res.data.result.users.length;
+      //   vm.total=res.data.result.users.length;
       //   vm.tableData=vm.tableData.slice(0,this.pageSize);
       //   }).catch(function(err){
       //   console.log(err);
       //     });
+      // },
+      soudata(){
+        var vm=this; 
+        vm.$http.get('http://www.wug.com/api/userlist',{
+           params: vm.soucondi
+         }).then((res)=>{
+        vm.tableData=res.data.data;
+        vm.tableData1=res.data.data;
+        vm.total=res.data.data.length;
+        vm.tableData=vm.tableData.slice(0,this.pageSize);
+        }).catch(function(err){
+        console.log(err);
+          });
       },
-
       onSubmit(){//提交搜索条件
-        
-        this.getdata();
+        this.soucondi.nick=this.form.nick;
+        this.soucondi.offlineid=this.form.offid;
+        this.soucondi.date1=this.soudate[0];
+        this.soucondi.date2=this.soudate[1];
+        this.soucondi.type=1;
+        this.soucondi.userable=1;
+        this.soudata();
       },
     },
       mounted(){
+   
+    // this.getofflist();
+    }
+    ,created(){
     this.getdata();
-    this.getofflist();
     }
   }
 </script>
