@@ -6,7 +6,8 @@
    <i  v-show="isrotate2"  class="fa fa-bars fa-2x " aria-hidden="true"  style="color: #606266;"  @click="rotate2()"></i>
      <el-breadcrumb separator="/" >
   <el-breadcrumb-item ><a  @click="routeshouye()">首页</a></el-breadcrumb-item>
-  <el-breadcrumb-item>待审核</el-breadcrumb-item>
+  <el-breadcrumb-item><a>用户列表</a></el-breadcrumb-item>
+  <el-breadcrumb-item>待审核列表</el-breadcrumb-item>
   </el-breadcrumb>
     </div>
   <div class="right">
@@ -198,25 +199,12 @@
         this.userinfo=rows;  
         this.idx = index;
         this.editVisible=true;
-       
-        if(!this.offlist.length<1){
-          console.log('空的');
-          // alert(34);
-          this.getofflist();
-        }else{
-           console.log('不为空');
-           console.log(this.offlist.length);
-           console.log('打印');
-           this.getofflist();
-        }
-        console.log('12111111111111111111111111');
       },
       shenhequxiao(){
         this.userinfo.offid='';
         this.editVisible=false;
       },
       shenhe(type){//逻辑实现
-     
         if(!this.userinfo.offid){   
            this.$message({
            message: '请选择网点',
@@ -225,7 +213,6 @@
         }); 
           return false;
         }
-        alert(this.userinfo.offid);
         this.editVisible=false;
         var vm=this; 
         vm.$http.post('http://192.168.0.89:3300/web',{
@@ -252,57 +239,43 @@
           });
           this.userinfo.offid='';
       },
-     
-      // axios1() {//获取待审核人员列表和网点信息
-      //    var vm=this; 
-      //    var obj={
-      //       userlist:vm.$http.post('http://192.168.0.89:3300/web',{
-      //       cmd:"getUserList",
-      //       data:JSON.stringify({
-      //       sessionid:sessionStorage.getItem('sessionid'),
-      //       account:sessionStorage.getItem('account'),
-      //       type:0,
-      //       usable:0
-      //    })
-      //    }),
-      //       offlist:vm.$http.post('http://192.168.0.89:3300/web',{
-      //       cmd:"getOfflineList",
-      //       data:JSON.stringify({
-      //       account:sessionStorage.getItem('account'),
-      //       sessionid:sessionStorage.getItem('sessionid'),
-      //    })
-      //    })
+      axios1() {//获取待审核人员列表和网点信息
+         var vm=this; 
+         var obj={
+              userlist:vm.$http.get('http://www.wug.com/api/userlist',{
+              params:{
+              type:0,
+              usable:0
+              }
+         }),
+            offlist:vm.$http.post('http://192.168.0.89:3300/web',{
+            cmd:"getOfflineList",
+            data:JSON.stringify({
+            account:sessionStorage.getItem('account'),
+            sessionid:sessionStorage.getItem('sessionid'),
+         })
+         })
 
-      //    };
-      //   return  obj;
-      // },
-    //  axios2() {//获取网点列表
-    //     var vm=this; 
-    //     return vm.$http.post('http://192.168.0.89:3300/web',{
-    //         cmd:"getOfflineList",
-    //         data:JSON.stringify({
-    //         account:sessionStorage.getItem('account'),
-    //         sessionid:sessionStorage.getItem('sessionid'),
-    //      })
-    //      });
-    //  },
-  //     getdata(){
-  //       var vm=this; 
-  //       vm.$http.all([vm.axios1().userlist,vm.axios1().offlist]).then(vm.$http.spread(function (res,lateres) {
-  //           console.log(vm.offlist);
-  //         console.log('请求');
-  //         console.log(res);
-  //         console.log('请求1');
-  //         console.log(lateres);
-  //       vm.tableData=res.data.result.users;
-  //       vm.tableData1=res.data.result.users;
-  //       vm.total=res.data.result.users.length;
-  //       vm.tableData=vm.tableData.slice(0,vm.pageSize);
-  //       vm.offlist=lateres.data.result.list;
+         };
+        return  obj;
+      },
+      getdata(){
+        var vm=this; 
+        vm.$http.all([vm.axios1().offlist,vm.axios1().userlist]).then(vm.$http.spread(function (lateres,res) {
+            console.log(vm.offlist);
+          console.log('请求');
+          console.log(res);
+          console.log('请求1');
+          console.log(lateres);
+        vm.tableData=res.data.data;
+        vm.tableData1=res.data.data;
+        vm.total=res.data.data.length;
+        vm.tableData=vm.tableData.slice(0,vm.pageSize);
+        vm.offlist=lateres.data.result.list;
         
-  //       // 两个请求现在都执行完成
-  // }));
-  //     },
+        // 两个请求现在都执行完成
+  }));
+      },
       soudata(){
         var vm=this; 
         vm.$http.get('http://www.wug.com/api/userlist',{
@@ -316,45 +289,7 @@
         console.log(err);
           });
       },
-      getdata(){
-        var vm=this; 
-        vm.$http.post('http://192.168.0.89:3300/web',{
-            cmd:"getUserList",
-            data:JSON.stringify({
-            sessionid:sessionStorage.getItem('sessionid'),
-            account:sessionStorage.getItem('account'),
-            type:0,
-            usable:0
-         })
-         }).then((res)=>{
-        console.log(res.data.cmd);
-        console.log(res.data.result.status);
-        console.log(res.data.result.users);
-        console.log('待审核');
-        vm.tableData=res.data.result.users;
-        vm.tableData1=res.data.result.users;
-        vm.total=res.data.result.users.length;
-        vm.tableData=vm.tableData.slice(0,this.pageSize);
-        }).catch(function(err){
-        console.log(err);
-          });
-      },
-      getofflist(){
-        var vm=this; 
-        vm.$http.post('http://192.168.0.89:3300/web',{
-            cmd:"getOfflineList",
-            data:JSON.stringify({
-            account:sessionStorage.getItem('account'),
-            sessionid:sessionStorage.getItem('sessionid'),
-         })
-         }).then((res)=>{
-        vm.offlist=res.data.result.list;
-        console.log(res.data.result.list);
-        console.log('网点列表');
-        }).catch(function(err){
-        console.log(err); 
-          });
-      },
+     
       deleteRow(){
         this.tableData.splice(this.idx, 1);
         this.$message({
@@ -392,10 +327,8 @@
         this.soucondi.userable=0;
         this.soudata();
       },
-
     },
       mounted(){
-
     },
       created(){
       this.getdata()

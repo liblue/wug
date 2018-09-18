@@ -6,23 +6,18 @@
     <!-- <header><v-header></v-header></header> -->
     <div class="content">
     
-    <router-view></router-view>
+    <keep-alive><router-view></router-view></keep-alive>
     <footer>
       <div class="footer-con">
       © 2018-2019
       </div>
             </footer>
-  
     </div>
-
-
   </div>
 </template>
 
 <script>
 import  Menu from './Menu.vue'
-
-
 export default {
   name: 'Layout',
   data () {
@@ -33,10 +28,8 @@ export default {
    components:{ 
     'v-menu':Menu,
      },methods:{
-      
      }
 }
-
   // this.$router.push({  
   //          path:'/shouye',
   //         });

@@ -269,25 +269,6 @@
         // 两个请求现在都执行完成
     }));
       },
-      // getdata(){//获取表格数据
-      //   var vm=this; 
-      //   vm.$http.post('http://192.168.0.89:3300/web',{
-      //       cmd:"getUserList",
-      //       data:JSON.stringify({
-      //       sessionid:sessionStorage.getItem('sessionid'),
-      //       account:sessionStorage.getItem('account'),
-      //       type:2,
-      //       usable:1
-      //    })
-      //    }).then((res)=>{
-      //   vm.tableData=res.data.result.users;
-      //   vm.tableData1=res.data.result.users;
-      //   vm.total=res.data.result.users.length;
-      //   vm.tableData=vm.tableData.slice(0,this.pageSize);
-      //   }).catch(function(err){
-      //   console.log(err);
-      //     });
-      // },
       soudata(){
         var vm=this; 
         vm.$http.get('http://www.wug.com/api/userlist',{

@@ -5,7 +5,7 @@
    <i  v-show="isrotate1"  class="fa fa-bars fa-2x fa-rotate-90" aria-hidden="true"  style="color: #606266;"  @click="rotate1()"></i>
    <i  v-show="isrotate2"  class="fa fa-bars fa-2x " aria-hidden="true"  style="color: #606266;"  @click="rotate2()"></i>
      <el-breadcrumb separator="/" >
-  <el-breadcrumb-item ><a >首页</a></el-breadcrumb-item>
+  <el-breadcrumb-item ><a>首页</a></el-breadcrumb-item>
  
   </el-breadcrumb>
     </div>
@@ -25,7 +25,32 @@
       </el-dropdown>
     </div>
   </div>
-    </div>
+  <div class="card">
+  <el-row >
+  <el-col :span="22">
+    <el-card shadow="hover">
+   <router-link to="warehouse">订单列表</router-link>
+    </el-card>
+  </el-col>
+  <el-col :span="22">
+    <el-card shadow="hover"  >
+    <router-link to="warehouse">订单列表</router-link>
+    </el-card>
+  </el-col>
+  <el-col :span="22">
+    <el-card shadow="hover">
+   <router-link to="warehouse">订单列表</router-link>
+    </el-card>
+  </el-col>
+    <el-col :span="22">
+    <el-card shadow="hover">
+     <router-link to="warehouse">订单列表</router-link>
+    </el-card>
+  </el-col>
+</el-row>
+</div>
+  </div>
+   
 </template>
 <script>
 export default {
@@ -33,8 +58,9 @@ export default {
   data () {
     return {
        isrotate1:false,
-        isrotate2:true,
-    
+       isrotate2:true,
+       currentDate: new Date()
+       
     }
   },
   mounted(){
@@ -60,6 +86,16 @@ export default {
 </script>
 
 <style  scoped>
+
+  .clearfix:before,
+  .clearfix:after {
+      display: table;
+      content: "";
+  }
+  
+  .clearfix:after {
+      clear: both
+  }
 #header .icon, #header .left .icon-menu, #header .right .el-icon-rank {
     font-size: 24px;
     transition: 0.2s all ease-in-out;
@@ -95,6 +131,13 @@ export default {
     margin-left: 30px;
 }
 .username{
+  cursor: pointer;
+}
+  .el-row{
+    padding-left: 20px;
+  }
+.el-col{
+  margin-top:30px;
   cursor: pointer;
 }
 </style>

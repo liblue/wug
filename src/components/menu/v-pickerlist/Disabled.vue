@@ -216,39 +216,41 @@
         this.tableData.splice(this.idx, 1);
       },
 
-      // getofflist(){
-      //  var vm=this; 
-      //   vm.$http.post('http://192.168.0.89:3300/web',{
-      //       cmd:"getOfflineList",
-      //       data:JSON.stringify({
-      //       account:sessionStorage.getItem('account'),
-      //       sessionid:sessionStorage.getItem('sessionid'),
-            
-      //    })
-      //    }).then((res)=>{
-      //   vm.offlist=res.data.result.list;
-      //   }).catch(function(err){
-      //   console.log(err); 
-      //     });
-      // },
-      getdata(){//获取表格数据
-        var vm=this; 
-        vm.$http.post('http://192.168.0.89:3300/web',{
-            cmd:"getUserList",
+   
+       axios1() {//获取待审核人员列表和网点信息
+         var vm=this; 
+         var obj={
+            userlist:vm.$http.get('http://www.wug.com/api/userlist',{
+              params:{
+                type:1,
+                usable:0
+              }
+         }),
+            offlist:vm.$http.post('http://192.168.0.89:3300/web',{
+            cmd:"getOfflineList",
             data:JSON.stringify({
-            sessionid:sessionStorage.getItem('sessionid'),
             account:sessionStorage.getItem('account'),
-            type:1,
-            usable:0
+            sessionid:sessionStorage.getItem('sessionid'),
          })
-         }).then((res)=>{
-        vm.tableData=res.data.result.users;
-        vm.tableData1=res.data.result.users;
-        vm.total=res.data.result.users.length;
-        vm.tableData=vm.tableData.slice(0,this.pageSize);
-        }).catch(function(err){
-        console.log(err);
-          });
+         })
+         };
+        return  obj;
+      },
+           getdata(){
+        var vm=this; 
+        vm.$http.all([vm.axios1().offlist,vm.axios1().userlist]).then(vm.$http.spread(function (lateres,res,) {
+          console.log(vm.offlist);
+          console.log('请求');
+          console.log(res);
+          console.log('请求1');
+          console.log(lateres);
+        vm.tableData=res.data.data;
+        vm.tableData1=res.data.data;
+        vm.total=res.data.data.length;
+        vm.tableData=vm.tableData.slice(0,vm.pageSize);
+        vm.offlist=lateres.data.result.list;
+        // 两个请求现在都执行完成
+    }));
       },
       soudata(){
         var vm=this; 

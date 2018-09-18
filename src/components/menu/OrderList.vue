@@ -29,12 +29,12 @@
   
     <el-form-item label="拣货员">
     <el-select v-model="form.pickerid" placeholder="请选择拣货员">
-      <el-option   v-for="item in pickerlist" :value="item.id"  :label="item.name" ></el-option>
+      <el-option   v-for="item in pickerlist" :value="item.id"  :label="item.nick" ></el-option>
     </el-select>
   </el-form-item>
   <el-form-item label="配送员">
     <el-select v-model="form.riderid" placeholder="请选择配送员">
-      <el-option   v-for="item in riderlist" :value="item.id"  :label="item.name" ></el-option>
+      <el-option   v-for="item in riderlist" :value="item.id"  :label="item.nick" ></el-option>
       
     </el-select>
   </el-form-item>
@@ -115,12 +115,10 @@
       return {
         soudate:[],
         pickerlist:[ 
-            {id:1,name:"小红"},
-            {id:2,name:"小话"},
+           
             ],
          riderlist:[
-            {id:1,name:"小红"},
-            {id:2,name:"小话"},
+           
             ],
         form:{
         },
@@ -155,51 +153,89 @@
       this.soucondi.orderstatus=tab.name;
       this.getdata();
       },
-      getpickerlist(){
-        var vm=this; 
-        vm.$http.post('http://120.25.216.139:3300/web',{
-            cmd:sessionStorage.getItem('cmd'),
-            data:JSON.stringify({
-            sessionid:sessionStorage.getItem('sessionid'),
-            account:sessionStorage.getItem('account'),
-            type:1,
-            usable:1
-         })
-        }).then((res)=>{
-        console.log(res.data);
-        }).catch(function(err){
-        console.log(err);
-          });
+      axios1() {//获取待审核人员列表和网点信息
+         var vm=this; 
+         var obj={
+           pickerlist:vm.$http.get('http://www.wug.com/api/userlist',{
+              params:{
+                offlineid:sessionStorage.getItem('offlineid'),
+                type:1,
+              }
+         }),
+           riderlist:vm.$http.get('http://www.wug.com/api/userlist',{
+              params:{
+                offlineid:sessionStorage.getItem('offlineid'),
+                type:2,
+              }
+         }),
+            orderlist:vm.$http.get('http://www.wug.com/api/orderlist',{
+            params: vm.soucondi
+        })
+         };
+        return  obj;
       },
-      getriderlist(){
+      // getpickerlist(){
+      //   var vm=this; 
+      //   vm.$http.post('http://120.25.216.139:3300/web',{
+      //       cmd:sessionStorage.getItem('cmd'),
+      //       data:JSON.stringify({
+      //       sessionid:sessionStorage.getItem('sessionid'),
+      //       account:sessionStorage.getItem('account'),
+      //       type:1,
+      //       usable:1
+      //    })
+      //   }).then((res)=>{
+      //   console.log(res.data);
+      //   }).catch(function(err){
+      //   console.log(err);
+      //     });
+      // },
+      // getriderlist(){
+      //   var vm=this; 
+      //   vm.$http.post('http://120.25.216.139:3300/web',{
+      //       cmd:sessionStorage.getItem('cmd'),
+      //       data:JSON.stringify({
+      //       sessionid:sessionStorage.getItem('sessionid'),
+      //       account:sessionStorage.getItem('account'),
+      //       type:2,
+      //       usable:1
+      //    })
+      //   }).then((res)=>{
+      //   console.log(res.data);
+      //   }).catch(function(err){
+      //   console.log(err);
+      //     });
+      // },
+      // getdata(){
+      //   var vm=this; 
+      //   vm.$http.get('http://www.wug.com/api/orderlist',{
+      //      params: vm.soucondi
+      //   }).then((res)=>{
+      //   console.log(res.data);
+      //   vm.tableData=res.data.data;
+      //   vm.tableData1=res.data.data;
+      //   vm.total=vm.tableData.length;
+      //   vm.tableData=vm.tableData.slice(0,this.pageSize);
+      //   }).catch(function(err){
+      //   console.log(err);
+      //     });
+      // },
+        getdata(){
         var vm=this; 
-        vm.$http.post('http://120.25.216.139:3300/web',{
-            cmd:sessionStorage.getItem('cmd'),
-            data:JSON.stringify({
-            sessionid:sessionStorage.getItem('sessionid'),
-            account:sessionStorage.getItem('account'),
-            type:2,
-            usable:1
-         })
-        }).then((res)=>{
-        console.log(res.data);
-        }).catch(function(err){
-        console.log(err);
-          });
-      },
-      getdata(){
-        var vm=this; 
-        vm.$http.get('http://www.wug.com/api/orderlist',{
-           params: vm.soucondi
-        }).then((res)=>{
-        console.log(res.data);
-        vm.tableData=res.data.data;
-        vm.tableData1=res.data.data;
-        vm.total=vm.tableData.length;
-        vm.tableData=vm.tableData.slice(0,this.pageSize);
-        }).catch(function(err){
-        console.log(err);
-          });
+        vm.$http.all([vm.axios1().pickerlist,vm.axios1().riderlist,vm.axios1().orderlist]).then(vm.$http.spread(function (res1,res2,res3) {
+        vm.tableData=res3.data.data;
+        vm.tableData1=res3.data.data;
+        vm.total=res3.data.data.length;
+        vm.tableData=vm.tableData.slice(0,vm.pageSize);
+        vm.pickerlist=res1.data.data;
+        vm.riderlist=res2.data.data;
+        console.log('拣货员');
+        console.log(vm.pickerlist);
+        console.log('骑手');
+        console.log(vm.riderlist);
+        
+        // 两个请求现在都执行完成
+    }));
       },
       onSubmit(){
         this.soucondi.offlineid=sessionStorage.getItem('offlineid');
@@ -207,9 +243,7 @@
         this.soucondi.riderid=this.form.riderid;
         this.soucondi.date1=this.soudate[0];
         this.soucondi.date2=this.soudate[1];
-
         // alert(this.soucondi.date1);
-        // alert(this.soucondi.orderstatus);
         // alert('拣货员id='+this.soucondi.pickerid);
         // alert('骑手id='+this.soucondi.riderid);
         // alert('骑手id='+this.soucondi.offlineid);

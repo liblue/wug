@@ -69,7 +69,7 @@ sessionStorage.setItem('offlineid',id);
       },
       routeshouye(){
         this.$router.push({
-           path:'match',
+           path:'/shouye',
           });
       },
       rotate1(){//打开侧边栏

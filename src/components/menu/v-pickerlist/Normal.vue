@@ -218,21 +218,6 @@
         this.tableData.splice(this.idx, 1);
       },
 
-      // getofflist(){
-      //  var vm=this; 
-      //   vm.$http.post('http://192.168.0.89:3300/web',{
-      //       cmd:"getOfflineList",
-      //       data:JSON.stringify({
-      //       account:sessionStorage.getItem('account'),
-      //       sessionid:sessionStorage.getItem('sessionid'),
-            
-      //    })
-      //    }).then((res)=>{
-      //   vm.offlist=res.data.result.list;
-      //   }).catch(function(err){
-      //   console.log(err); 
-      //     });
-      // },
        axios1() {//获取待审核人员列表和网点信息
          var vm=this; 
          var obj={
@@ -252,7 +237,7 @@
          };
         return  obj;
       },
-           getdata(){
+        getdata(){
         var vm=this; 
         vm.$http.all([vm.axios1().offlist,vm.axios1().userlist]).then(vm.$http.spread(function (lateres,res,) {
           console.log(vm.offlist);
@@ -265,29 +250,9 @@
         vm.total=res.data.data.length;
         vm.tableData=vm.tableData.slice(0,vm.pageSize);
         vm.offlist=lateres.data.result.list;
-        
         // 两个请求现在都执行完成
     }));
       },
-      // getdata(){//获取表格数据
-      //   var vm=this; 
-      //   vm.$http.post('http://192.168.0.89:3300/web',{
-      //       cmd:"getUserList",
-      //       data:JSON.stringify({
-      //       sessionid:sessionStorage.getItem('sessionid'),
-      //       account:sessionStorage.getItem('account'),
-      //       type:1,
-      //       usable:1
-      //    })
-      //    }).then((res)=>{
-      //   vm.tableData=res.data.result.users;
-      //   vm.tableData1=res.data.result.users;
-      //   vm.total=res.data.result.users.length;
-      //   vm.tableData=vm.tableData.slice(0,this.pageSize);
-      //   }).catch(function(err){
-      //   console.log(err);
-      //     });
-      // },
       soudata(){
         var vm=this; 
         vm.$http.get('http://www.wug.com/api/userlist',{
