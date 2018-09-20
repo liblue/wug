@@ -2,11 +2,11 @@
 <template>
 <div>
 
+<div class="logo">
+<router-link to="/shouye"  style="cursor:point"><img :src="logourl"  :width="logowidth" height="50px"></router-link>
 
-<a @click="fun()" style="cursor:point">111111</a>
-
-
-<el-menu default-active="1-4-1"  background-color="#495060"
+</div>
+<el-menu :default-active="openmenu"  background-color="#495060"
       text-color="#c9cbd0"
       active-text-color="#2d8cf0"  class="el-menu-vertical-demo" @open="handleOpen" @close="handleClose" :collapse="isCollapse" unique-opened>
       <el-submenu  v-for="item in menulist"  :index="item.index" >
@@ -14,40 +14,26 @@
           <i :class="item.icon"></i>
           <span>{{item.title}}</span>
         </template>
-         <el-menu-item v-for="it in item.menu"  :index="it.index" @click="choose(it.url,item.title,it.title)">{{it.title}}</el-menu-item>
+         <el-menu-item v-for="it in item.menu"  :index="it.index" @click="choose(it.url,it.index)">{{it.title}}</el-menu-item>
      </el-submenu>
-     <el-menu-item  v-for="item in othermenu"  :index="item.index"  @click="choose(item.url,item.title)">
+     <el-menu-item  v-for="item in othermenu"  :index="item.index"  @click="choose(item.url,item.index)">
         <i :class="item.icon"></i>
         <span slot="title">{{item.title}}</span>
       </el-menu-item>
 </el-menu>
 </div>
 </template>
-<style  scoped>
-  .el-menu-vertical-demo:not(.el-menu--collapse) {
-    width: 200px;
-    min-height: 400px;
-  }
-  .el-menu{
-border:none;
-      background-color:#495060;
-  }
-  .fa{
-    margin-right: 5px;
-    width: 24px;
-    text-align: center;
-    font-size: 14px;
-    vertical-align: middle;
-  }
-</style>
+
 
 <script>
-
-import bus from '../assets/eventBus';  //传值组件 中转站
+ import  eventBus from '../assets/eventBus';  //传值组件 中转站
   export default {
     data(){
       return {
+          openmenu:"",
           isCollapse: false,
+          logowidth:"150px",
+          logourl:require('../assets/shouye.png'),
           menulist:[
         {
           index: 1,
@@ -77,8 +63,7 @@ import bus from '../assets/eventBus';  //传值组件 中转站
           open:'no',
           menu: [
             {'index':'3-1','title':'订单统计图','url':'/chart'},
-            {'index':'3-2','title':'拣货员统计图','url':'/chart'},
-            {'index':'3-3','title':'配送员统计图','url':'/chart'}
+          
 
             ]
         },
@@ -138,13 +123,59 @@ import bus from '../assets/eventBus';  //传值组件 中转站
       handleClose(key, keyPath) {
         console.log(key, keyPath);
       },
-      choose(url,place1,place2){
-      bus.$emit('chooseMenu',{'place1':place1,'place2':place2,'nav1':false,'nav2':true});
+      acceptmsg(){
+         eventBus.$on("myfun",(message)=>{   //这里最好用箭头函数，不然this指向有问题
+                 if(message=='close'){
+                   this.isCollapse=true;
+                   this.logowidth="30px";
+                   this.logourl=require('../assets/11.png');
+
+                 }
+                  if(message=='open'){
+                   this.isCollapse=false;
+                   this.logowidth="150px";
+                   this.logourl=require('../assets/shouye.png');
+                 }
+            })
+      },
+     choose(url,index){
+      sessionStorage.setItem('openmenu',index);
         this.$router.push({
            path:url,
           });
       }
+    },
+    mounted(){
+      this.openmenu=sessionStorage.getItem('openmenu');
+    },
+    created(){
+       this.acceptmsg();
     }
   }
 
 </script>
+
+<style scoped>
+
+.logo{
+
+margin-top:10px;
+padding:20px;
+}
+  .el-menu-vertical-demo:not(.el-menu--collapse) {
+    width: 200px;
+    min-height: 400px;
+  }
+  .el-menu{
+border:none;
+      background-color:#495060;
+  }
+  .fa{
+    margin-right: 5px;
+    width: 24px;
+    text-align: center;
+    font-size: 14px;
+    vertical-align: middle;
+    cursor: pointer;
+  }
+</style>

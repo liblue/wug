@@ -237,6 +237,7 @@
         return  obj;
       },
            getdata(){
+              this.openFullScreen2();
         var vm=this; 
         vm.$http.all([vm.axios1().offlist,vm.axios1().userlist]).then(vm.$http.spread(function (lateres,res,) {
           console.log(vm.offlist);
@@ -273,6 +274,17 @@
         this.soucondi.type=1;
         this.soucondi.userable=0;
         this.soudata();
+      },
+         openFullScreen2() {
+        const loading = this.$loading({
+          lock: true,
+          text: 'Loading',
+          spinner: 'el-icon-loading',
+          background: 'rgba(0, 0, 0, 0.7)'
+        });
+        setTimeout(() => {
+          loading.close();
+        }, 1000);
       },
     },
       mounted(){

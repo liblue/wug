@@ -15,13 +15,13 @@
    <div class="tablelist" >
    <div class="tab">
     <el-tabs v-model="activeName2" type="card" @tab-click="handleClick">
-    <el-tab-pane label="已完成订单" name="10"></el-tab-pane>
-    <el-tab-pane label="待配货订单" name="20" ></el-tab-pane>
-    <el-tab-pane label="正在配订单" name="30" ></el-tab-pane>
-    <el-tab-pane label="正在配送单" name="40" ></el-tab-pane>
-    <el-tab-pane label="正配送订单" name="50" ></el-tab-pane>
-    <el-tab-pane label="正在配送订单" name="60" ></el-tab-pane>
-
+    <el-tab-pane label="已完成" name="60"></el-tab-pane>
+    <el-tab-pane label="配送中" name="50" ></el-tab-pane>
+    <el-tab-pane label="检货完成" name="40" ></el-tab-pane>
+    <el-tab-pane label="拣货中" name="30" ></el-tab-pane>
+    <el-tab-pane label="待拣货" name="20" ></el-tab-pane>
+    <el-tab-pane label="待派单" name="10" ></el-tab-pane>
+    <el-tab-pane label="关闭订单" name="close" ></el-tab-pane>
   </el-tabs> 
   </div>
   <div class="sousuoform">
@@ -35,7 +35,6 @@
   <el-form-item label="配送员">
     <el-select v-model="form.riderid" placeholder="请选择配送员">
       <el-option   v-for="item in riderlist" :value="item.id"  :label="item.nick" ></el-option>
-      
     </el-select>
   </el-form-item>
   <el-form-item label="起始时间" style="width:25%">
@@ -53,16 +52,15 @@
 </el-form>
   </div>
    <el-table
-    :data="tableData"
+    :data="tableData" 
     style="width: 100%">
-  
     <el-table-column
       label="商品 ID"
-      prop="id" width="200px">
+      prop="orderId" width="200px">
     </el-table-column>
       <el-table-column
       label="收货人"
-      prop="receiverName" width="200px">
+      prop="status" width="200px">
     </el-table-column>
       <el-table-column
       label="商品 ID"
@@ -83,15 +81,11 @@
       <el-table-column type="expand">
       <template slot-scope="props" width="50px">
         <el-form label-position="center" inline class="demo-table-expand">
-          <el-form-item label="商品名称">
-            <span>{{ props.row.id }}</span>
+
+          <el-form-item label="商品名称"  v-for=" item,index in props.row.orders" >
+            <span>{{  item.title }}</span>
           </el-form-item>
-          <el-form-item label="商品名称">
-            <span>{{ props.row.id }}</span>
-          </el-form-item>
-          <el-form-item label="商品名称">
-            <span>{{ props.row.id }}</span>
-          </el-form-item>
+          
         </el-form>
       </template>
     </el-table-column>
@@ -110,20 +104,22 @@
  </div>
 </template>
 <script>
+  import { Loading } from 'element-ui';
+  import eventBus from '../../assets/eventBus.js'
   export default {
     data() {
       return {
+        loading:true,
         soudate:[],
         pickerlist:[ 
-           
             ],
          riderlist:[
-           
             ],
         form:{
         },
         soucondi:{
-           orderstatus:10,
+           status:60,
+           closeType:'open',
         },
         tableData: [],
         tableData1:[],
@@ -135,22 +131,29 @@
         isrotate2:true,
         activeIndex: '1',
         tabPosition: 'top',
-        activeName2:"10"
+        activeName2:"60"
       };
     },
     methods: {
-      rotate1(){
+      rotate1(){//打开侧边栏
+      eventBus.$emit('myfun','open')
       this.isrotate1=false;//使旋转的消失
       this.isrotate2=true;//使不旋转的出现
       },
-      rotate2(){
+      rotate2(){//收起侧边栏
+      eventBus.$emit('myfun','close')
       this.isrotate2=false;
       this.isrotate1=true;
       },
       handleClick(tab,event) {
       this.soucondi={};
       this.form={};
-      this.soucondi.orderstatus=tab.name;
+      this.soucondi.status=tab.name;
+      this.soucondi.offlineid=sessionStorage.getItem('offlineid');
+      this.soucondi.closeType="open";
+      if(tab.name=="close"){
+      this.soucondi.closeType="close";
+      }
       this.getdata();
       },
       axios1() {//获取待审核人员列表和网点信息
@@ -170,6 +173,7 @@
          }),
             orderlist:vm.$http.get('http://www.wug.com/api/orderlist',{
             params: vm.soucondi
+           
         })
          };
         return  obj;
@@ -221,6 +225,12 @@
       //     });
       // },
         getdata(){
+    
+        
+      console.log('1111111111=='+this.soucondi.status);
+      console.log('2222222222=='+this.soucondi.closeType);
+      console.log('23333333333=='+this.soucondi.offlineid);
+        this.openFullScreen2();
         var vm=this; 
         vm.$http.all([vm.axios1().pickerlist,vm.axios1().riderlist,vm.axios1().orderlist]).then(vm.$http.spread(function (res1,res2,res3) {
         vm.tableData=res3.data.data;
@@ -229,11 +239,12 @@
         vm.tableData=vm.tableData.slice(0,vm.pageSize);
         vm.pickerlist=res1.data.data;
         vm.riderlist=res2.data.data;
+        console.log('订单');
+        console.log(res3.data.data);
         console.log('拣货员');
         console.log(vm.pickerlist);
         console.log('骑手');
         console.log(vm.riderlist);
-        
         // 两个请求现在都执行完成
     }));
       },
@@ -247,7 +258,6 @@
         // alert('拣货员id='+this.soucondi.pickerid);
         // alert('骑手id='+this.soucondi.riderid);
         // alert('骑手id='+this.soucondi.offlineid);
-
         this.getdata();
       },
       handleSizeChange(val) {
@@ -260,15 +270,34 @@
         this.tableData=this.tableData1;
         this.tableData=this.tableData.slice((this.currentPage-1)*this.pageSize,this.currentPage*this.pageSize);
       },
+      openFullScreen2() {
+        const loading = this.$loading({
+          lock: true,
+          text: 'Loading',
+          spinner: 'el-icon-loading',
+          background: 'rgba(0, 0, 0, 0.7)'
+        });
+        setTimeout(() => {
+          loading.close();
+        }, 2000);
+      },
     },
     mounted(){
+    
+    },created(){
+     
       this.getdata();
+
     }
   };
 </script>
 
 
+
 <style scoped>
+ body {
+    margin: 0;
+  }
 #header .icon, #header .left .icon-menu, #header .right .el-icon-rank {
     font-size: 24px;
     transition: 0.2s all ease-in-out;

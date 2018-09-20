@@ -139,6 +139,7 @@
  </div>
 </template>
 <script>
+  import eventBus from '../../assets/eventBus.js'
   export default {
     data() {
       return {
@@ -173,10 +174,12 @@
           });
       },
       rotate1(){//打开侧边栏
+      eventBus.$emit('myfun','open')
       this.isrotate1=false;//使旋转的消失
       this.isrotate2=true;//使不旋转的出现
       },
       rotate2(){//收起侧边栏
+      eventBus.$emit('myfun','close')
       this.isrotate2=false;
       this.isrotate1=true;
       },

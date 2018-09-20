@@ -27,7 +27,16 @@ export default {
   },
    components:{ 
     'v-menu':Menu,
-     },methods:{
+     }
+  ,methods:{
+     },
+     created(){
+    if(!sessionStorage.getItem('sessionid')){
+      this.$router.push({  
+           path:'/',
+          });
+    }
+
      }
 }
   // this.$router.push({  

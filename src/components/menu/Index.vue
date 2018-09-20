@@ -34,17 +34,17 @@
   </el-col>
   <el-col :span="22">
     <el-card shadow="hover"  >
-    <router-link to="warehouse">订单列表</router-link>
+    <router-link to="pickerlist">拣货员列表</router-link>
     </el-card>
   </el-col>
   <el-col :span="22">
     <el-card shadow="hover">
-   <router-link to="warehouse">订单列表</router-link>
+   <router-link to="riderlist">配送员列表</router-link>
     </el-card>
   </el-col>
     <el-col :span="22">
     <el-card shadow="hover">
-     <router-link to="warehouse">订单列表</router-link>
+     <router-link to="check">待审核列表</router-link>
     </el-card>
   </el-col>
 </el-row>
@@ -53,6 +53,7 @@
    
 </template>
 <script>
+import eventBus from '../../assets/eventBus.js'
 export default {
  
   data () {
@@ -60,18 +61,25 @@ export default {
        isrotate1:false,
        isrotate2:true,
        currentDate: new Date()
-       
     }
   },
   mounted(){
     
   },
   methods: {
-    rotate1(){//打开侧边栏
+      logout(){
+      sessionStorage.clear() 
+      this.$router.push({  
+           path:'/',
+          });
+      },
+      rotate1(){//打开侧边栏
+      eventBus.$emit('myfun','open')
       this.isrotate1=false;//使旋转的消失
       this.isrotate2=true;//使不旋转的出现
       },
       rotate2(){//收起侧边栏
+      eventBus.$emit('myfun','close')
       this.isrotate2=false;
       this.isrotate1=true;
       },
@@ -92,7 +100,6 @@ export default {
       display: table;
       content: "";
   }
-  
   .clearfix:after {
       clear: both
   }
@@ -102,12 +109,9 @@ export default {
     cursor: pointer;
     color: #606266;
 }
-
 .icon-menu:before {
     content: "\e7f4";
 }
-
-
 #header{
   display: -ms-flexbox;
     display: flex;
@@ -120,7 +124,6 @@ export default {
     box-shadow: 0 2px 1px 1px rgba(100,100,100,0.1);
     padding: 0 20px;
     margin-bottom:10px; 
-
 }
 #header>div {
     
@@ -139,5 +142,9 @@ export default {
 .el-col{
   margin-top:30px;
   cursor: pointer;
+}
+.el-card:hover a{
+
+  color:rgb(45, 140, 240);
 }
 </style>

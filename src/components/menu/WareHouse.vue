@@ -28,11 +28,11 @@
     </div>
   </div>
 <el-row>
-  <el-col :span="3" v-for="index in tableData"  :offset="index > 0 ? 0 : 0" style="cursor:poiner" >
+  <el-col :span="3" v-for="index in tableData"  :offset="index > 0 ? 0 : 0" style="cursor:poiner;height:300px" >
     <el-card :body-style="{ padding: '0px' }" shadow="hover"  >
       <img :src="index.image_thumb" class="image"  style="height:210px"  @click="checkorder(index.id)" >
-      <div style="padding: 14px;cursor:pointer"  @click="checkorder(index.id)">
-        <span>{{index.name}}</span>
+      <div style="padding: 14px;cursor:pointer;"  @click="checkorder(index.id)">
+        <span  style="display:block;height:35px;word-break:break-all;overflow:hidden">{{index.name}}{{index.id}}</span>
         <div class="bottom clearfix">
           <el-button type="text" class="button" @click="checkorder(index.id)">查看订单</el-button>
         </div>
@@ -43,6 +43,7 @@
 </div>
 </template>
 <script>
+import eventBus from '../../assets/eventBus.js'
 export default {
     data(){
 return{
@@ -73,22 +74,31 @@ sessionStorage.setItem('offlineid',id);
           });
       },
       rotate1(){//打开侧边栏
+      eventBus.$emit('myfun','open')
       this.isrotate1=false;//使旋转的消失
       this.isrotate2=true;//使不旋转的出现
       },
       rotate2(){//收起侧边栏
+      eventBus.$emit('myfun','close')
       this.isrotate2=false;
       this.isrotate1=true;
       },
       getdata(){
         var vm=this; 
-        vm.$http.post('http://192.168.0.89:3300/web',{
+        vm.$http.post('http://120.25.216.139:3300/web',{
             cmd:"getOfflineList",
             data:JSON.stringify({
             account:sessionStorage.getItem('account'),
             sessionid:sessionStorage.getItem('sessionid'),
          })
          }).then((res)=>{
+           console.log(res);
+           console.log(res.data.result.status);
+           if(res.data.result.status=='996'){
+           this.$router.push({
+           path:'/login',
+          });
+           }
         vm.tableData=res.data.result.list;
         }).catch(function(err){
         console.log(err); 
@@ -122,7 +132,6 @@ sessionStorage.setItem('offlineid',id);
 .icon-menu:before {
     content: "\e7f4";
 }
-
 
 #header{
    display: -ms-flexbox;
