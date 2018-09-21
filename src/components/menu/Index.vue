@@ -64,7 +64,7 @@ export default {
     }
   },
   mounted(){
-    
+      
   },
   methods: {
       logout(){
@@ -83,12 +83,14 @@ export default {
       this.isrotate2=false;
       this.isrotate1=true;
       },
-      routeshouye(){
-        this.$router.push({  
-           path:'/shouye',
-          });
-      },
+     
    
+  },
+  activated(){
+   
+  },
+  create(){
+     
   }
 }
 </script>

@@ -9,6 +9,7 @@
 <el-menu :default-active="openmenu"  background-color="#495060"
       text-color="#c9cbd0"
       active-text-color="#2d8cf0"  class="el-menu-vertical-demo" @open="handleOpen" @close="handleClose" :collapse="isCollapse" unique-opened>
+      
       <el-submenu  v-for="item in menulist"  :index="item.index" >
         <template slot="title">
           <i :class="item.icon"></i>
@@ -63,8 +64,6 @@
           open:'no',
           menu: [
             {'index':'3-1','title':'订单统计图','url':'/chart'},
-          
-
             ]
         },
       ],
@@ -129,21 +128,27 @@
                    this.isCollapse=true;
                    this.logowidth="30px";
                    this.logourl=require('../assets/11.png');
-
                  }
                   if(message=='open'){
                    this.isCollapse=false;
                    this.logowidth="150px";
                    this.logourl=require('../assets/shouye.png');
                  }
+                 if(message=='shouye'){
+                  this.openmenu="2-2";
+                  sessionStorage.setItem('openmenu','2-2');
+                 }
             })
       },
      choose(url,index){
-      sessionStorage.setItem('openmenu',index);
+     sessionStorage.setItem('openmenu',index);
         this.$router.push({
            path:url,
           });
       }
+    },
+    activated(){
+    
     },
     mounted(){
       this.openmenu=sessionStorage.getItem('openmenu');

@@ -252,21 +252,50 @@
          };
         return  obj;
       },
+        getuserlist(){
+          var vm=this; 
+              vm.$http.get('http://www.wug.com/api/userlist',{
+               params:{
+                type:2,
+                usable:1
+              }
+         }).then((res)=>{
+          vm.tableData=res.data.data;
+          vm.tableData1=res.data.data;
+          vm.total=res.data.data.length;
+          vm.tableData=vm.tableData.slice(0,vm.pageSize);
+        }).catch(function(err){
+        console.log(err); 
+          });
+        // 两个请求现在都执行完成
+        },
       getdata(){
-         this.openFullScreen2();
+        if(sessionStorage.getItem('warehouses')){
+           this.offlist=JSON.parse(sessionStorage.getItem('warehouses'));
+           this.getuserlist();
+           return false;
+         }
+        const loading = this.$loading({
+          lock: true,
+          text: 'Loading',
+          spinner: 'el-icon-loading',
+          background: 'rgba(0, 0, 0, 0.7)'
+        });
         var vm=this; 
-        vm.$http.all([vm.axios1().offlist,vm.axios1().userlist]).then(vm.$http.spread(function (lateres,res,) {
-          console.log(vm.offlist);
-          console.log('请求');
-          console.log(res);
-          console.log('请求1');
-          console.log(lateres);
+        vm.$http.all([vm.axios1().offlist,vm.axios1().userlist]).then(vm.$http.spread(function (lateres,res) {
         vm.tableData=res.data.data;
         vm.tableData1=res.data.data;
         vm.total=res.data.data.length;
         vm.tableData=vm.tableData.slice(0,vm.pageSize);
         vm.offlist=lateres.data.result.list;
-        
+          if(lateres.data.result.status=='996'){
+           vm.$router.push({
+           path:'/login',
+          });
+           }
+        var warehouses=JSON.stringify(vm.offlist);
+        sessionStorage.setItem('warehouses',warehouses);
+         loading.close();
         // 两个请求现在都执行完成
     }));
       },
@@ -288,24 +317,13 @@
         this.soucondi.offlineid=this.form.offid;
         this.soucondi.date1=this.soudate[0];
         this.soucondi.date2=this.soudate[1];
-        this.soucondi.type=1;
-        this.soucondi.userable=1;
+        this.soucondi.type=2;
+        this.soucondi.usable=1;
         this.soudata();
       },
-         openFullScreen2() {
-        const loading = this.$loading({
-          lock: true,
-          text: 'Loading',
-          spinner: 'el-icon-loading',
-          background: 'rgba(0, 0, 0, 0.7)'
-        });
-        setTimeout(() => {
-          loading.close();
-        }, 1000);
-      },
+     
     },
       mounted(){
-  
     // this.getofflist();
     },
     created(){

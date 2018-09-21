@@ -29,7 +29,7 @@
     submitForm(){
        sessionStorage.setItem('account',this.form.account);
        var vm=this;
-       vm.$http.post('http://120.25.216.139:3300/web',{
+         vm.$http.post('http://192.168.0.89:3300/web',{
          cmd:"adminLogin",
          data:JSON.stringify({
              account:vm.form.account,
@@ -37,6 +37,7 @@
          })
           }).then((res)=>{
             if(res.data.result.status==100){
+             console.log(res);
              sessionStorage.setItem('sessionid',res.data.result.sessionid);
              vm.$router.push({
              path:'/manage',

@@ -21,27 +21,25 @@ import  Menu from './Menu.vue'
 export default {
   name: 'Layout',
   data () {
-    return {
-      msg: 'Welcome to Your Vue.js App'
-    }
   },
    components:{ 
     'v-menu':Menu,
      }
   ,methods:{
      },
-     created(){
-    if(!sessionStorage.getItem('sessionid')){
+     mounted(){
+ if(!sessionStorage.getItem('sessionid')){
       this.$router.push({  
            path:'/',
           });
     }
 
+     },
+     created(){
+   
      }
 }
-  // this.$router.push({  
-  //          path:'/shouye',
-  //         });
+
 </script>
 
 <!-- Add "scoped" attribute to limit CSS to this component only -->

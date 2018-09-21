@@ -183,6 +183,12 @@
       this.isrotate2=false;
       this.isrotate1=true;
       },
+      routeshouye(){
+         eventBus.$emit('myfun','shouye');
+        this.$router.push({  
+           path:'/shouye',
+          });
+      },
       formatter(row, column) {
         return row.nick;
       },
@@ -317,11 +323,7 @@
         this.tableData=this.tableData1;
         this.tableData=this.tableData.slice((this.currentPage-1)*this.pageSize,this.currentPage*this.pageSize);
       },
-      routeshouye(){
-        this.$router.push({  
-           path:'/shouye',
-          });
-      },
+   
       onSubmit(){//提交搜索条件
         this.soucondi.nick=this.form.nick;
         this.soucondi.date1=this.soudate[0];

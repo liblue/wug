@@ -18,7 +18,7 @@
           <div class="face">
             <i class="iconfont icon-user"></i>
           </div>
-          <span class="username">sdfsdfsdf</span>
+          <span class="username">管理员信息</span> 
         </span>
         <el-dropdown-menu slot="dropdown">
           <el-dropdown-item command="center"><router-link tag="li" to="adminadd">个人中心</router-link></el-dropdown-item>
@@ -47,18 +47,12 @@ import eventBus from '../../assets/eventBus.js'
 export default {
     data(){
 return{
- 
   tableData:[
-
       ],
+warehouses:[],
 isrotate1:false,
 isrotate2:true,
-checkorder(id){
-sessionStorage.setItem('offlineid',id);
- this.$router.push({
-    path:'orderlist'
-  })
-}
+
 
 }
     },methods:{
@@ -69,6 +63,7 @@ sessionStorage.setItem('offlineid',id);
           });
       },
       routeshouye(){
+        eventBus.$emit('myfun','shouye');
         this.$router.push({
            path:'/shouye',
           });
@@ -83,9 +78,21 @@ sessionStorage.setItem('offlineid',id);
       this.isrotate2=false;
       this.isrotate1=true;
       },
+      checkorder(id){
+      sessionStorage.setItem('offlineid',id);
+      this.$router.push({
+      path:'orderlist'
+  })
+    },
       getdata(){
+         if(sessionStorage.getItem('warehouses')){
+           this.tableData=JSON.parse(sessionStorage.getItem('warehouses'));
+           console.log('session仓库');
+           console.log(this.tableData);
+           return false;
+         }
         var vm=this; 
-        vm.$http.post('http://120.25.216.139:3300/web',{
+        vm.$http.post('http://192.168.0.89:3300/web',{
             cmd:"getOfflineList",
             data:JSON.stringify({
             account:sessionStorage.getItem('account'),
@@ -100,23 +107,20 @@ sessionStorage.setItem('offlineid',id);
           });
            }
         vm.tableData=res.data.result.list;
+        var warehouses=JSON.stringify(vm.tableData);
+        sessionStorage.setItem('warehouses',warehouses);
         }).catch(function(err){
         console.log(err); 
           });
       },
     },mounted(){
-
       this.getdata();
     }
-    
 }
 </script>
 
 <style scoped>
-.warehouse{
 
- 
-}
 #header .icon, #header .left .icon-menu, #header .right .el-icon-rank {
     font-size: 24px;
     transition: 0.2s all ease-in-out;
@@ -126,9 +130,7 @@ sessionStorage.setItem('offlineid',id);
 .fa{
   cursor: pointer;
 }
-.fa:hover{
-  /* color:red; */
-}
+
 .icon-menu:before {
     content: "\e7f4";
 }

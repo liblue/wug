@@ -29,12 +29,12 @@
   
     <el-form-item label="拣货员">
     <el-select v-model="form.pickerid" placeholder="请选择拣货员">
-      <el-option   v-for="item in pickerlist" :value="item.id"  :label="item.nick" ></el-option>
+      <el-option   v-for="item in pickerlist" :value="item.id" :key="item.key" :label="item.nick" ></el-option>
     </el-select>
   </el-form-item>
   <el-form-item label="配送员">
     <el-select v-model="form.riderid" placeholder="请选择配送员">
-      <el-option   v-for="item in riderlist" :value="item.id"  :label="item.nick" ></el-option>
+      <el-option   v-for="item in riderlist" :value="item.id" :key="item.key"   :label="item.nick" ></el-option>
     </el-select>
   </el-form-item>
   <el-form-item label="起始时间" style="width:25%">
@@ -82,7 +82,7 @@
       <template slot-scope="props" width="50px">
         <el-form label-position="center" inline class="demo-table-expand">
 
-          <el-form-item label="商品名称"  v-for=" item,index in props.row.orders" >
+          <el-form-item label="商品名称"  v-for=" item,index in props.row.orders"  :value="item.value"  >
             <span>{{  item.title }}</span>
           </el-form-item>
           
@@ -225,12 +225,15 @@
       //     });
       // },
         getdata(){
-    
-        
       console.log('1111111111=='+this.soucondi.status);
       console.log('2222222222=='+this.soucondi.closeType);
       console.log('23333333333=='+this.soucondi.offlineid);
-        this.openFullScreen2();
+        const loading = this.$loading({
+          lock: true,
+          text: 'Loading',
+          spinner: 'el-icon-loading',
+          background: 'rgba(0, 0, 0, 0.7)'
+        });
         var vm=this; 
         vm.$http.all([vm.axios1().pickerlist,vm.axios1().riderlist,vm.axios1().orderlist]).then(vm.$http.spread(function (res1,res2,res3) {
         vm.tableData=res3.data.data;
@@ -239,6 +242,7 @@
         vm.tableData=vm.tableData.slice(0,vm.pageSize);
         vm.pickerlist=res1.data.data;
         vm.riderlist=res2.data.data;
+        loading.close();
         console.log('订单');
         console.log(res3.data.data);
         console.log('拣货员');
@@ -270,17 +274,9 @@
         this.tableData=this.tableData1;
         this.tableData=this.tableData.slice((this.currentPage-1)*this.pageSize,this.currentPage*this.pageSize);
       },
-      openFullScreen2() {
-        const loading = this.$loading({
-          lock: true,
-          text: 'Loading',
-          spinner: 'el-icon-loading',
-          background: 'rgba(0, 0, 0, 0.7)'
-        });
-        setTimeout(() => {
-          loading.close();
-        }, 2000);
-      },
+    },
+    activated(){
+    this.getdata();
     },
     mounted(){
     

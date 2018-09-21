@@ -10,8 +10,13 @@
   <button  @click="change()">  改变localst</button>
   </div>
     <button  @click="quchu()"> 取出localst</button>
+    <button  @click="openmenu()"> 取出openmenu</button>
+    
     <button  @click="quaccount()"> 取出account</button>
     <button  @click="quseesinid()"> 取出sessionid</button>
+    <button  @click="quoffid()"> 取出offlineid</button>
+    <button  @click="quwarehouse()"> 取出warehouse</button>
+
     <button  @click="clearall()"> 清除所有</button>
 ddddd<input v-model="msg" type="text">
 <input :value="msg" type="text">
@@ -45,6 +50,10 @@ return {
 }
     },
     methods: {
+      openmenu(){
+ alert(sessionStorage.getItem('openmenu'));
+
+      },
          openFullScreen() {
         this.fullscreenLoading = true;
         setTimeout(() => {
@@ -87,6 +96,16 @@ return {
        change(){
         sessionStorage.setItem('indexUrl','改变后的');
       
+      },
+      quoffid(){
+         alert(sessionStorage.getItem('offlineid'));
+
+
+      },
+      quwarehouse(){
+         alert(sessionStorage.getItem('warehouses'));
+
+
       },
       clearall(){
           sessionStorage.clear() 

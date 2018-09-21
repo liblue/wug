@@ -72,6 +72,7 @@
           });
       },
       routeshouye(){
+      eventBus.$emit('myfun','shouye');
       this.$router.push({
            path:'/shouye',
           });
