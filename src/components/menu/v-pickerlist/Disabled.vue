@@ -28,7 +28,7 @@
  <el-table
     :data="tableData"
     style="width: 100%">
-    <el-table-column type="selection" width="55"></el-table-column>
+    <!-- <el-table-column type="selection" width="55"></el-table-column> -->
     <el-table-column
       type="index"
       :index="indexMethod"></el-table-column>
@@ -100,7 +100,7 @@
             <div class="del-dialog-cnt">是否确定启用？</div>
             <span slot="footer" class="dialog-footer">
                 <el-button @click="jinVisible = false">取 消</el-button>
-                <el-button type="primary" @click="qiYong" >确 定</el-button>
+                <el-button type="primary" @click="qiYong()" >确 定</el-button>
             </span>
         </el-dialog>
 <!-- 删除框弹出 -->
@@ -171,7 +171,7 @@
      qiYong(){
         this.jinVisible=false;//关闭弹出框
         var vm=this; 
-        vm.$http.post('http://192.168.0.89:3300/web',{
+        vm.$http.post(vm.api1,{
             cmd:"userEnable",
             data:JSON.stringify({
             account:sessionStorage.getItem('account'),
@@ -179,6 +179,11 @@
             user_account:vm.userinfo.account,
          })
          }).then((res)=>{
+            if(res.data.result.status=='996'){
+           vm.$router.push({
+           path:'/login',
+          });
+           }
            console.log('启用中');
            console.log(res);
            vms.$message({
@@ -194,7 +199,7 @@
       deleteRow(){//逻辑实现删除一行
         this.delVisible = false;
         var vm=this; 
-        vm.$http.post('http://192.168.0.89:3300/web',{
+        vm.$http.post(vm.api1,{
             cmd:"userDelete",
             data:JSON.stringify({
             account:sessionStorage.getItem('account'),
@@ -202,6 +207,12 @@
             user_account:vm.userinfo.account,
          })
          }).then((res)=>{
+        if(res.data.result.status=='996'){
+           vm.$router.push({
+           path:'/login',
+          });
+           }
+           
            console.log('禁用中');
            console.log(res);
            vms.$message({
@@ -215,18 +226,16 @@
         this.total=this.total-1;//每次删除后总条数减1，
         this.tableData.splice(this.idx, 1);
       },
-
-   
        axios1() {//获取待审核人员列表和网点信息
          var vm=this; 
          var obj={
-            userlist:vm.$http.get('http://www.wug.com/api/userlist',{
+            userlist:vm.$http.get(vm.api2+'userlist',{
               params:{
                 type:1,
                 usable:0
               }
          }),
-            offlist:vm.$http.post('http://192.168.0.89:3300/web',{
+            offlist:vm.$http.post(vm.api1,{
             cmd:"getOfflineList",
             data:JSON.stringify({
             account:sessionStorage.getItem('account'),
@@ -238,12 +247,14 @@
       },
        getuserlist(){
           var vm=this; 
-              vm.$http.get('http://www.wug.com/api/userlist',{
+              vm.$http.get(vm.api2+'userlist',{
                params:{
                 type:1,
                 usable:0
               }
          }).then((res)=>{
+
+           
           vm.tableData=res.data.data;
           vm.tableData1=res.data.data;
           vm.total=res.data.data.length;
@@ -286,7 +297,7 @@
       },
       soudata(){
         var vm=this; 
-        vm.$http.get('http://www.wug.com/api/userlist',{
+        vm.$http.get(this.api2+'userlist',{
            params: vm.soucondi
          }).then((res)=>{
         vm.tableData=res.data.data;

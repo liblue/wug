@@ -62,6 +62,10 @@
       label="收货人"
       prop="status" width="200px">
     </el-table-column>
+          <el-table-column
+      label="收货人联系方式"
+      prop="receiverTel" width="120px">
+    </el-table-column>
       <el-table-column
       label="商品 ID"
       prop="id" width="200px">
@@ -139,12 +143,25 @@
       eventBus.$emit('myfun','open')
       this.isrotate1=false;//使旋转的消失
       this.isrotate2=true;//使不旋转的出现
+      sessionStorage.setItem('isrotate1',1);
       },
       rotate2(){//收起侧边栏
       eventBus.$emit('myfun','close')
       this.isrotate2=false;
       this.isrotate1=true;
+      sessionStorage.setItem('isrotate1',2);
       },
+      checkrotate(){
+        if(sessionStorage.getItem('isrotate1')==2){
+          this.isrotate2=false;
+          this.isrotate1=true;
+        }
+        if(sessionStorage.getItem('isrotate1')==1){
+          this.isrotate1=false;//使旋转的消失
+          this.isrotate2=true;//使不旋转的出现
+        }
+      },
+
       handleClick(tab,event) {
       this.soucondi={};
       this.form={};
@@ -159,75 +176,25 @@
       axios1() {//获取待审核人员列表和网点信息
          var vm=this; 
          var obj={
-           pickerlist:vm.$http.get('http://www.wug.com/api/userlist',{
+           pickerlist:vm.$http.get(vm.api2+'userlist',{
               params:{
                 offlineid:sessionStorage.getItem('offlineid'),
                 type:1,
               }
          }),
-           riderlist:vm.$http.get('http://www.wug.com/api/userlist',{
+           riderlist:vm.$http.get(vm.api2+'userlist',{
               params:{
                 offlineid:sessionStorage.getItem('offlineid'),
                 type:2,
               }
          }),
-            orderlist:vm.$http.get('http://www.wug.com/api/orderlist',{
+            orderlist:vm.$http.get(vm.api2+'orderlist',{
             params: vm.soucondi
-           
         })
          };
         return  obj;
       },
-      // getpickerlist(){
-      //   var vm=this; 
-      //   vm.$http.post('http://120.25.216.139:3300/web',{
-      //       cmd:sessionStorage.getItem('cmd'),
-      //       data:JSON.stringify({
-      //       sessionid:sessionStorage.getItem('sessionid'),
-      //       account:sessionStorage.getItem('account'),
-      //       type:1,
-      //       usable:1
-      //    })
-      //   }).then((res)=>{
-      //   console.log(res.data);
-      //   }).catch(function(err){
-      //   console.log(err);
-      //     });
-      // },
-      // getriderlist(){
-      //   var vm=this; 
-      //   vm.$http.post('http://120.25.216.139:3300/web',{
-      //       cmd:sessionStorage.getItem('cmd'),
-      //       data:JSON.stringify({
-      //       sessionid:sessionStorage.getItem('sessionid'),
-      //       account:sessionStorage.getItem('account'),
-      //       type:2,
-      //       usable:1
-      //    })
-      //   }).then((res)=>{
-      //   console.log(res.data);
-      //   }).catch(function(err){
-      //   console.log(err);
-      //     });
-      // },
-      // getdata(){
-      //   var vm=this; 
-      //   vm.$http.get('http://www.wug.com/api/orderlist',{
-      //      params: vm.soucondi
-      //   }).then((res)=>{
-      //   console.log(res.data);
-      //   vm.tableData=res.data.data;
-      //   vm.tableData1=res.data.data;
-      //   vm.total=vm.tableData.length;
-      //   vm.tableData=vm.tableData.slice(0,this.pageSize);
-      //   }).catch(function(err){
-      //   console.log(err);
-      //     });
-      // },
         getdata(){
-      console.log('1111111111=='+this.soucondi.status);
-      console.log('2222222222=='+this.soucondi.closeType);
-      console.log('23333333333=='+this.soucondi.offlineid);
         const loading = this.$loading({
           lock: true,
           text: 'Loading',
@@ -243,12 +210,6 @@
         vm.pickerlist=res1.data.data;
         vm.riderlist=res2.data.data;
         loading.close();
-        console.log('订单');
-        console.log(res3.data.data);
-        console.log('拣货员');
-        console.log(vm.pickerlist);
-        console.log('骑手');
-        console.log(vm.riderlist);
         // 两个请求现在都执行完成
     }));
       },
@@ -258,10 +219,6 @@
         this.soucondi.riderid=this.form.riderid;
         this.soucondi.date1=this.soudate[0];
         this.soucondi.date2=this.soudate[1];
-        // alert(this.soucondi.date1);
-        // alert('拣货员id='+this.soucondi.pickerid);
-        // alert('骑手id='+this.soucondi.riderid);
-        // alert('骑手id='+this.soucondi.offlineid);
         this.getdata();
       },
       handleSizeChange(val) {
@@ -276,14 +233,12 @@
       },
     },
     activated(){
-    this.getdata();
     },
     mounted(){
-    
-    },created(){
-     
-      this.getdata();
-
+      this.checkrotate();
+    },
+    created(){
+    this.getdata();
     }
   };
 </script>

@@ -10,7 +10,7 @@
   <el-breadcrumb-item>订单统计图</el-breadcrumb-item>
   </el-breadcrumb>
     </div>
-  <div class="right">
+    <div class="right">
       <i class="el-icon-rank"  title="全屏"></i>
       <el-dropdown class="faceAndMenu">
         <span class="el-dropdown-link">
@@ -26,11 +26,8 @@
       </el-dropdown>
     </div>
   </div>
-
     <div class="block"  >
        <!-- <span class="demonstration">选择日期</span> -->
-
-
 <el-input v-model="input" placeholder="请输入员工ID"  style="width:14%"></el-input>
   <el-select v-model="reason" placeholder="请选择" >
     <el-option
@@ -40,13 +37,12 @@
       :value="item.value">
     </el-option>
   </el-select>
-
     <el-date-picker
       v-model="value4"
       type="month"
       placeholder="选择月">
     </el-date-picker>
-    <el-button type="primary" @click="onSubmit">生成图表</el-button>
+    <el-button type="primary" @click="onSubmit()">生成图表</el-button>
   </div>
 
     <div class="tuchart">
@@ -130,13 +126,15 @@ export default {
         }
     }
   },
+  activated(){
+  },
   mounted(){
-    this.drawLine();
-    this.getdata();
-
+   
   },
   created(){
-  this.getdata();
+   this.onSubmit()
+      this.drawLine();
+      this.getdata();
   },
   methods: {
     logout(){
@@ -161,15 +159,19 @@ export default {
           });
       },
       onSubmit(){
-      this.option1.series[0].data=this.tableData;
+       this.option1.series[0].data=this.tableData;
        this.getdata();
        this.drawLine()
       },
       getdata(){
+           const loading = this.$loading({
+          lock: true,
+          text: 'Loading',
+          spinner: 'el-icon-loading',
+          background: 'rgba(0, 0, 0, 0.7)'
+        });
         var vm=this; 
-        
-
-        vm.$http.get('http://www.wug.com/api/orderchart',{
+        vm.$http.get(vm.api2+'orderchart',{
               params:{
               date:vm.value4,
               userid:vm.input,
@@ -179,41 +181,17 @@ export default {
          vm.tableData=res.data;
          vm.option1.series[0].data=vm.tableData;
          vm.drawLine();
-
-        //  this.option1.series[0].data=[20,30,40,50];
+         this.option1.series[0].data=this.tableData;
+         loading.close();
   });
       },
       drawLine(){
-        // 基于准备好的dom，初始化echarts实例
-      //     var option = {
-      //     xAxis: {
-      //         type: 'category',
-      //         data: ['Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat', 'Sun']
-      //     },
-      //     yAxis: {
-      //         type: 'value'
-      //     },
-      //     series: [{
-      //         data: [820, 932, 901, 934, 1290, 1330, 1320],
-      //         type: 'bar'
-      //     }],
-      //     markPoint : {
-      //           data : [
-      //               {type : 'max', name: '最大值'},
-      //               {type : 'min', name: '最小值'}
-      //           ]
-      //       },
-      // };
         let myChart = this.$echarts.init(document.getElementById('myChart'));
-        // let Chart = this.$echarts.init(document.getElementById('Chart'))
-        // 绘制图表
-        // Chart.setOption(option);
         myChart.setOption(this.option1);
     }
   }
 }
 </script>
-
 <style  scoped>
 #header .icon, #header .left .icon-menu, #header .right .el-icon-rank {
     font-size: 24px;
@@ -225,7 +203,7 @@ export default {
     content: "\e7f4";
 }
 #header{
-  display: -ms-flexbox;
+   display: -ms-flexbox;
     display: flex;
     -ms-flex-align: center;
     align-items: center;

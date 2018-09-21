@@ -16,7 +16,8 @@
     <button  @click="quseesinid()"> 取出sessionid</button>
     <button  @click="quoffid()"> 取出offlineid</button>
     <button  @click="quwarehouse()"> 取出warehouse</button>
-
+   <button  @click="qurotate1()"> 取出rotate1</button>
+   <button  @click="qurotate2()"> 取出rotate2</button>
     <button  @click="clearall()"> 清除所有</button>
 ddddd<input v-model="msg" type="text">
 <input :value="msg" type="text">
@@ -99,8 +100,12 @@ return {
       },
       quoffid(){
          alert(sessionStorage.getItem('offlineid'));
-
-
+      },
+      qurotate1(){
+         alert(sessionStorage.getItem('isrotate1'));
+      },
+      qurotate2(){
+         alert(sessionStorage.getItem('isrotate2'));
       },
       quwarehouse(){
          alert(sessionStorage.getItem('warehouses'));

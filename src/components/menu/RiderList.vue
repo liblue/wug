@@ -81,11 +81,24 @@
       eventBus.$emit('myfun','open')
       this.isrotate1=false;//使旋转的消失
       this.isrotate2=true;//使不旋转的出现
+      sessionStorage.setItem('isrotate1',1);
       },
       rotate2(){//收起侧边栏
       eventBus.$emit('myfun','close')
+      
       this.isrotate2=false;
       this.isrotate1=true;
+      sessionStorage.setItem('isrotate1',2);
+      },
+      checkrotate(){
+        if(sessionStorage.getItem('isrotate1')==2){
+         this.isrotate2=false;
+         this.isrotate1=true;
+        }
+         if(sessionStorage.getItem('isrotate1')==1){
+          this.isrotate1=false;//使旋转的消失
+          this.isrotate2=true;//使不旋转的出现
+        }
       },
       handleClick(tab,event) {
        this.$router.push({
@@ -104,6 +117,9 @@
           });
 
       },
+    },
+    mounted(){
+      this.checkrotate();
     }
   };
 </script>

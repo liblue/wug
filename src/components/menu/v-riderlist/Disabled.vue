@@ -28,7 +28,7 @@
  <el-table
     :data="tableData"
     style="width: 100%">
-    <el-table-column type="selection" width="55"></el-table-column>
+    <!-- <el-table-column type="selection" width="55"></el-table-column> -->
     <el-table-column
       type="index"
       :index="indexMethod"></el-table-column>
@@ -173,7 +173,7 @@
      qiYong(){
         this.jinVisible=false;//关闭弹出框
         var vm=this; 
-        vm.$http.post('http://192.168.0.89:3300/web',{
+        vm.$http.post(vm.api1,{
             cmd:"userEnable",
             data:JSON.stringify({
             account:sessionStorage.getItem('account'),
@@ -181,22 +181,24 @@
             user_account:vm.userinfo.account,
          })
          }).then((res)=>{
-           console.log('启用中');
-           console.log(res);
+          if(res.data.result.status=='996'){
+           vm.$router.push({
+           path:'/login',
+          });
+           }
            vms.$message({
                message: '已启用',
                type: 'success',
                duration:'1000'
          });
         }).catch(function(err){
-        console.log(err); 
           });
       this.tableData.splice(this.idx, 1);
       },
       deleteRow(){//逻辑实现删除一行
         this.delVisible = false;
         var vm=this; 
-        vm.$http.post('http://192.168.0.89:3300/web',{
+        vm.$http.post(vm.api1,{
             cmd:"userDelete",
             data:JSON.stringify({
             account:sessionStorage.getItem('account'),
@@ -204,15 +206,17 @@
             user_account:vm.userinfo.account,
          })
          }).then((res)=>{
-           console.log('禁用中');
-           console.log(res);
+         if(res.data.result.status=='996'){
+           vm.$router.push({
+           path:'/login',
+          });
+           }
            vms.$message({
                message: '已删除',
                type: 'success',
                duration:'1000'
          });
         }).catch(function(err){
-         console.log(err); 
           });
         this.total=this.total-1;//每次删除后总条数减1，
         this.tableData.splice(this.idx, 1);
@@ -220,13 +224,13 @@
       axios1() {//获取待审核人员列表和网点信息
          var vm=this; 
          var obj={
-            userlist:vm.$http.get('http://www.wug.com/api/userlist',{
+            userlist:vm.$http.get(vm.api2+'userlist',{
               params:{
                 type:2,
                 usable:0
               }
          }),
-            offlist:vm.$http.post('http://192.168.0.89:3300/web',{
+            offlist:vm.$http.post(vm.api1,{
             cmd:"getOfflineList",
             data:JSON.stringify({
             account:sessionStorage.getItem('account'),
@@ -238,7 +242,7 @@
       },
         getuserlist(){
           var vm=this; 
-              vm.$http.get('http://www.wug.com/api/userlist',{
+              vm.$http.get(vm.api2+'userlist',{
                params:{
                 type:2,
                 usable:0
@@ -249,14 +253,12 @@
           vm.total=res.data.data.length;
           vm.tableData=vm.tableData.slice(0,vm.pageSize);
         }).catch(function(err){
-        console.log(err); 
           });
         // 两个请求现在都执行完成
         },
        getdata(){
         if(sessionStorage.getItem('warehouses')){
            this.offlist=JSON.parse(sessionStorage.getItem('warehouses'));
-           console.log('session仓库');
            this.getuserlist();
            return false;
          }
@@ -286,7 +288,7 @@
       },
       soudata(){
         var vm=this; 
-        vm.$http.get('http://www.wug.com/api/userlist',{
+        vm.$http.get(vm.api2+'userlist',{
            params: vm.soucondi
          }).then((res)=>{
         vm.tableData=res.data.data;
@@ -294,7 +296,6 @@
         vm.total=res.data.data.length;
         vm.tableData=vm.tableData.slice(0,this.pageSize);
         }).catch(function(err){
-        console.log(err);
           });
       },
       onSubmit(){//提交搜索条件

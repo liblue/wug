@@ -92,7 +92,7 @@ isrotate2:true,
            return false;
          }
         var vm=this; 
-        vm.$http.post('http://192.168.0.89:3300/web',{
+        vm.$http.post(vm.api1,{
             cmd:"getOfflineList",
             data:JSON.stringify({
             account:sessionStorage.getItem('account'),

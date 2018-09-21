@@ -19,10 +19,6 @@ import WareHouse  from '../components/menu/WareHouse'
 
 
 
-
-import FiOrList  from '../components/menu/v-orderlist/FiOrList'
-import WaOrList  from '../components/menu/v-orderlist/WaOrList'
-import DeOrList  from '../components/menu/v-orderlist/DeOrList'
 import Rdisabled from '../components/menu/v-riderlist/Disabled'
 import Rnormal   from '../components/menu/v-riderlist/Normal'
 import Pdisabled from '../components/menu/v-pickerlist/Disabled'

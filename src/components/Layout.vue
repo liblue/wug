@@ -30,7 +30,7 @@ export default {
      mounted(){
  if(!sessionStorage.getItem('sessionid')){
       this.$router.push({  
-           path:'/',
+           path:'/login',
           });
     }
 

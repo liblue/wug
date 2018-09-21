@@ -10,10 +10,14 @@ import 'font-awesome/css/font-awesome.css'
 import axios from 'axios';
 import qs from 'qs';
 import echarts from 'echarts';
+import MyPlugin from './assets/global';
+
 
 Vue.prototype.$echarts = echarts ;
 Vue.prototype.$qs = qs;
 Vue.prototype.$http = axios;
+Vue.use(MyPlugin);
+
 Vue.use(ElementUI);
 
 Vue.config.productionTip = false
