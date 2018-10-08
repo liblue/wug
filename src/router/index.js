@@ -4,6 +4,7 @@ import Layout from '@/components/Layout'
 
 
 import Login  from '../components/Login'
+import NotFound from '../components/NotFound'
 
 import Index      from '../components/menu/Index'
 import AdminInfo  from '../components/menu/AdminInfo'
@@ -11,9 +12,6 @@ import PickerList from '../components/menu/PickerList'
 import RiderList  from '../components/menu/RiderList'
 import OrderList  from '../components/menu/OrderList'
 import Check      from '../components/menu/Check'
-import TestLogin  from '../components/menu/TestLogin'
-import TestRegist from '../components/menu/TestRegist'
-import Test       from '../components/menu/Test'
 import Chart      from '../components/menu/Chart'
 import WareHouse  from '../components/menu/WareHouse'
 
@@ -23,15 +21,16 @@ import Rdisabled from '../components/menu/v-riderlist/Disabled'
 import Rnormal   from '../components/menu/v-riderlist/Normal'
 import Pdisabled from '../components/menu/v-pickerlist/Disabled'
 import Pnormal   from '../components/menu/v-pickerlist/Normal'
- 
+
 Vue.use(Router)
 // import { menuRouter } from "@/router/router";
 
 export default new Router({
+  mode: 'history',
   routes: [
+    
     {
       path: '/manage',
-      name: 'Layout',
       component: Layout,
       　　 children: [ { 
         　　　　path: '/', 
@@ -45,13 +44,13 @@ export default new Router({
          　　　 component: Index
         　　  },
               { 
-            　　　path: '/adminadd', 
-                  name:'adminadd',
+            　　　path: '/admininfo', 
+                  name:'admininfo',
              　　 component: AdminInfo
               },
                { 
               　　path: '/pickerlist', 
-                name:'pickerlist',
+               
                　　component: PickerList,
                    children: [
                 {
@@ -100,7 +99,6 @@ export default new Router({
                   　　  },
                 { 
                     path: '/riderlist', 
-                    name:'riderlist',
                     component:RiderList,
                     children: [
                       {
@@ -131,26 +129,13 @@ export default new Router({
                     name:'chart',
                     component:Chart
                     },
-                 {
-                    path: '/testlogin', 
-                    name:'testlogin',
-                    component:TestLogin
-                    },
-                  {
-                    path: '/testregist', 
-                    name:'testregist',
-                    component:TestRegist
-                    }, 
+                
                   {
                     path: '/warehouse', 
                     name:'warehouse',
                     component:WareHouse
                     },
-                    {
-                      path: '/test', 
-                      name:'test',
-                      component:Test
-                    }, 
+                     
         　　]
     },
     {
@@ -164,6 +149,15 @@ export default new Router({
       component:Login
     },
     
+   {
+  path: "/404",
+  name: "notfound",
+  component: NotFound
+  }, {
+  path: "*", // 此处需特别注意置于最底部
+  redirect: "/404"
+  
+  } 
     
   ]
 })

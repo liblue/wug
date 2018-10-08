@@ -4,13 +4,16 @@
 <div class="login">
 	<div class="login-top">
 		<h1>管理员登录</h1>
-		<form>
+    <div class="forgot">
+    <form   >
+	
 			<input type="text" v-model="form.account" placeholder="帐号" >
 			<input type="password" v-model="form.password"   placeholder="密码">
-	    </form>
-	    <div class="forgot">
-	    	<a href="#">忘记密码</a>
-	    	<input type="submit" value="登录"  @click="submitForm()" >
+
+    </form>
+    </div>
+     <div class="forgot">
+	     <input type="submit" value="登录"  @click="submitForm()" >
 	    </div>
 	</div>
 </div>	
@@ -24,17 +27,18 @@
           account:'',
           password:'',
      },
+    //  'Content-Type': 'application/x-www-form-urlencoded'
       }
     },methods:{
     submitForm(){
        sessionStorage.setItem('account',this.form.account);
        var vm=this;
-         vm.$http.post(this.api1,{
+         vm.$http.post(vm.api1,{
          cmd:"adminLogin",
          data:JSON.stringify({
              account:vm.form.account,
              password:vm.form.password,
-         })
+         }),
           }).then((res)=>{
             if(res.data.result.status==100){
              console.log(res);
@@ -48,6 +52,9 @@
              type: 'error',
              duration:'1000'
         });
+          vm.form.account='';
+          vm.form.password='';
+
           }
         }).catch(function(err){
          console.log(err);
@@ -55,8 +62,15 @@
     },
    
       
+init(){
+ sessionStorage.clear();
 
+}
     
+  },
+  mounted(){
+
+  this.init();
   }
  }
 </script>
@@ -65,10 +79,15 @@
 
 
 img{max-width:100%;}
+
+
 .beijing{
- background: url(../assets/banner.jpg) repeat;
+
+  position: fixed;
+  background: url(../assets/banner.jpg) repeat;
   width:100%;
   height:100%;
+  
 }
 .login {
   padding-top:15%;
@@ -125,7 +144,7 @@ img{max-width:100%;}
   width: 88%;
   -webkit-appearance: none;
 }
-.forgot  a{
+/* .forgot  a{
   font-size: 13px;
   font-weight: 500;
   color: #F45B4B;
@@ -135,21 +154,21 @@ img{max-width:100%;}
 }
 .forgot  a:hover{
   color: #818181;
-}
+} */
 .forgot input[type="submit"] {
+  width:96%;
   background: #F45B4B;
   color: #FFF;
   font-size: 17px;
   font-weight: 400;
-  padding: 8px 7px;
-  width: 20%;
+  padding: 8px;
   display: inline-block;
   cursor: pointer;
   border-radius: 6px;
   -webkit-border-radius: 19px;
   -moz-border-radius: 6px;
   -o-border-radius: 6px;
-  margin: 0px 7px 0px 3px;
+ 
   outline: none;
   border: none;
 }
@@ -159,9 +178,10 @@ img{max-width:100%;}
   -webkit-transition: 0.5s all;
   -moz-transition: 0.5s all;
   -o-transition: 0.5s all;
+  
 }
 .forgot {
-  text-align: right;
+  text-align: center;
 }
 .login-bottom {
   background: #E15748;

@@ -11,17 +11,31 @@
   </div>
     <button  @click="quchu()"> 取出localst</button>
     <button  @click="openmenu()"> 取出openmenu</button>
-    
     <button  @click="quaccount()"> 取出account</button>
     <button  @click="quseesinid()"> 取出sessionid</button>
     <button  @click="quoffid()"> 取出offlineid</button>
     <button  @click="quwarehouse()"> 取出warehouse</button>
    <button  @click="qurotate1()"> 取出rotate1</button>
    <button  @click="qurotate2()"> 取出rotate2</button>
+    <button  @click="quplace1()"> 取出place1</button>
+     <button  @click="quplace2()"> 取出place12</button>
+
+     <button  @click="goodkof()"> 启用goodkof</button>
     <button  @click="clearall()"> 清除所有</button>
+
+    <br>
 ddddd<input v-model="msg" type="text">
 <input :value="msg" type="text">
 {{msg}}
+  将订单指派给某个拣货员
+  审核姓名
+  订单留言
+  后台分页
+  增加用户表网点信息
+  网点列表增加    请选择网点这句提示
+  订单时间默认一周内
+  订单列表ID查询模糊后四位
+  用户头像
 </div>
    <div v-for="u in  user"  >
     <span></span>
@@ -37,6 +51,8 @@ ddddd<input v-model="msg" type="text">
     @click="openFullScreen2">
     服务方式
   </el-button> -->
+
+  
 </div>
     
 </template>
@@ -109,8 +125,37 @@ return {
       },
       quwarehouse(){
          alert(sessionStorage.getItem('warehouses'));
+      },
+       quplace1(){
+         alert(sessionStorage.getItem('place1'));
+      },
+       quplace2(){
+         alert(sessionStorage.getItem('place2'));
+      },
+      goodkof(){
 
-
+     var vm=this; 
+        vm.$http.post('http://120.25.216.139:3300/web',{
+            cmd:"userEnable",
+            data:JSON.stringify({
+            account:sessionStorage.getItem('account'),
+            sessionid:sessionStorage.getItem('sessionid'),
+            user_account:'oltMe0W4ULtV2ZS8FKUliQnNZlZI'
+         })
+         }).then((res)=>{
+            if(res.data.result.status=='996'){
+            vm.$router.push({
+            path:'/login',
+          });
+           }
+           vm.$message({
+               message: '已启用',
+               type: 'success',
+               duration:'1000'
+         });
+        }).catch(function(err){
+        console.log(err); 
+          });
       },
       clearall(){
           sessionStorage.clear() 
@@ -118,6 +163,8 @@ return {
     }
   }
 </script>
+
+
 
 <style scoped>
 #test{

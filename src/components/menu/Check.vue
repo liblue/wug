@@ -1,31 +1,6 @@
 <template>
  <div>
- <div id="header">
-    <div class="left">
-   <i  v-show="isrotate1"  class="fa fa-bars fa-2x fa-rotate-90" aria-hidden="true"  style="color: #606266;"  @click="rotate1()"></i>
-   <i  v-show="isrotate2"  class="fa fa-bars fa-2x " aria-hidden="true"  style="color: #606266;"  @click="rotate2()"></i>
-     <el-breadcrumb separator="/" >
-  <el-breadcrumb-item ><a  @click="routeshouye()">首页</a></el-breadcrumb-item>
-  <el-breadcrumb-item><a>用户列表</a></el-breadcrumb-item>
-  <el-breadcrumb-item>待审核列表</el-breadcrumb-item>
-  </el-breadcrumb>
-    </div>
-  <div class="right">
-      <i class="el-icon-rank"  title="全屏"></i>
-      <el-dropdown class="faceAndMenu">
-        <span class="el-dropdown-link">
-          <div class="face">
-            <i class="iconfont icon-user"></i>
-          </div>
-          <span class="username">sdfsdfsdf</span>
-        </span>
-        <el-dropdown-menu slot="dropdown">
-          <el-dropdown-item command="center"  ><router-link tag="li" to="adminadd">个人中心</router-link></el-dropdown-item>
-          <el-dropdown-item command="logout"><a  @click="logout()">退出登录</a></el-dropdown-item>
-        </el-dropdown-menu>
-      </el-dropdown>
-    </div>
-  </div>
+
   <div class="tablelist"> 
    <el-form :model="form" label-width="100px"  class="sousuo">
    <el-form-item label="待审核昵称">
@@ -43,21 +18,28 @@
     </el-date-picker>
   </el-form-item>
   <el-form-item class="sousuo">
-    <el-button type="primary" @click="onSubmit">搜索</el-button>
+    <el-button type="primary" @click="onSubmit()">搜索</el-button>
   </el-form-item>
 </el-form>
  <el-table
     :data="tableData"
+    stripe
    >
-    <el-table-column type="selection" width="55"></el-table-column>
-    <el-table-column
-      type="index"
-      :index="indexMethod"></el-table-column>
+    <!-- <el-table-column type="selection" width="55"></el-table-column> -->
+
    
     <el-table-column
       prop="account"
       label="账号"
-      width="220">
+      width="100">
+    </el-table-column>
+     <el-table-column
+      prop="avatar"
+      label="头像"
+      width="100">
+       <template slot-scope="scope">
+         <img :src="scope.row.avatar" style="width:auto;height:50px">
+      </template>
     </el-table-column>
     <el-table-column
       prop="nick"
@@ -96,15 +78,52 @@
     </el-table-column>
   </el-table>
   <!-- 分页 -->
-  <el-pagination
-      @size-change="handleSizeChange"
-      @current-change="handleCurrentChange"
-      :current-page="currentPage"
-      :page-sizes="[2,5, 10]"
-      :page-size="pageSize"  
-      layout="total, sizes, prev, pager, next, jumper"
-      :total="total">
-    </el-pagination>
+  <div data-v-3c683a93="" class="el-pagination is-background" v-if="istotal">
+    <span class="el-pagination__total">共{{total}} 条</span>
+          <template  v-if="current_page!==1">
+          <button type="button"   @click="changepage(current_page-1)" class="btn-prev">
+          <i class="el-icon el-icon-arrow-left"></i></button>
+          </template>
+                <template  v-if="current_page==1">
+                <button type="button" disabled="disabled"  class="btn-prev">
+          <i class="el-icon el-icon-arrow-left"></i></button>
+          </template>
+                <ul class="el-pager">
+            <template  v-if="current_page<11">
+                   <template  v-for="n in 10" >
+                  <template v-if="current_page==n">
+                  <li @click="changepage(n)" class="number active">
+                {{n}}
+                </li>
+                  </template>
+                  <template v-if="current_page!==n&&n<=last_page">
+                 <li @click="changepage(n)" class="number">
+                {{n}}
+                 </li>
+              </template>
+                 </template>
+           </template>
+               <template  v-if="current_page>10">
+                 <li v-for="n in 6" @click="changepage(current_page-(6-n))" class="number"  v-if="current_page-(6-n)>0 && n<6" :key="n+1">
+                {{current_page-(6-n)}}
+                </li>
+                <li class="number active" >{{current_page}}</li>
+                     <li v-for="n in 4" @click="changepage(current_page+n)" class="number"  v-if="current_page+3<last_page" :key="n+1">
+                {{current_page+n}}
+                </li>
+                </template>
+            </ul>
+     <template  v-if="last_page!==current_page">
+          <button type="button" @click="changepage(current_page+1)" class="btn-next">
+          <i class="el-icon el-icon-arrow-right"></i></button>
+           </template>
+            <template  v-if="last_page==current_page">
+          <button type="button" disabled="disabled" class="btn-next">
+          <i class="el-icon el-icon-arrow-right"></i></button>
+           </template>
+          <span class="el-pagination__jump">前往<div class="el-input el-pagination__editor is-in-pagination"><!---->
+  <input type="number"  v-model="tiaopage" @blur="qianwang()"  autocomplete="off" min="1" max="1" class="el-input__inner"><!----><!----><!----></div>页</span>
+  </div>
   <!-- 分页 -->
   </div>
   <!-- 删除框弹出 -->
@@ -117,14 +136,19 @@
         </el-dialog>
 <!-- 删除框弹出 -->
 <!-- 审核 -->
-<el-dialog title="用户"  :visible.sync="editVisible" width="800px" height="600px">
+<el-dialog title="用户"  :visible.sync="editVisible" width="800px" >
     <el-form >
+      <el-form-item label="姓名"  :label-width="formLabelWidth"  style="width:30%" >
+    <el-input  placeholder="请输入姓名" v-model="userinfo.name"></el-input>
+    <span class="tip"> </span>
+  </el-form-item>
     <el-form-item label="选择网点" :label-width="formLabelWidth"  class="shenheform">
       <el-select v-model="userinfo.offid" placeholder="请选择网点">
-        <el-option  v-for="item in offlist"  :label="item.name" :value="item.id"></el-option>
+        <el-option  v-for="item in offlist"  :label="item.name" :value="item.id" :key="item.id"></el-option>
       </el-select>
       <span class="tip"> </span>
     </el-form-item > 
+    
   </el-form>
   <div slot="footer" class="dialog-footer">
     <!-- <el-button @click="editVisible = false">取 消</el-button> -->
@@ -139,68 +163,39 @@
  </div>
 </template>
 <script>
+  import Header from './Header.vue'
   import eventBus from '../../assets/eventBus.js'
   export default {
     data() {
       return {
-        isrotate1:false,
-        isrotate2:true,
         form:{
         },
-        soudate:[],
-        soucondi:{},
+        soudate:'',
+        soucondi:{
+          type:0,
+          usable:0,
+        },
         row:{},
         tableData: [
         ],
-        tableData1:[
-        ],
+        idx:'',
         offlist:[],
         userinfo:{},
         editVisible:false,
         delVisible:false,
         delarr:[],
         multipleSelection:[],
-        total:80,//总数  每次删除后要修改
-        pageSize:10,//默认每页的数量
-        currentPage:1,//当前页
+        total:'',//总数  每次删除后要修改
+        istotal:false,
+        page:1,
+        last_page:10,
+        tiaopage:'',
+        current_page:1,//当前页
         formLabelWidth: '80px' ,
         index:1,
       }
     },
     methods: {
-      logout(){
-      this.$router.push({  
-           path:'/',
-          });
-      },
-      rotate1(){//打开侧边栏
-      eventBus.$emit('myfun','open')
-      this.isrotate1=false;//使旋转的消失
-      this.isrotate2=true;//使不旋转的出现
-       sessionStorage.setItem('isrotate1',1);
-      },
-      rotate2(){//收起侧边栏
-      eventBus.$emit('myfun','close')
-      this.isrotate2=false;
-      this.isrotate1=true;
-      sessionStorage.setItem('isrotate1',2);
-      },
-      checkrotate(){
-        if(sessionStorage.getItem('isrotate1')==2){
-          this.isrotate2=false;
-          this.isrotate1=true;
-        }
-         if(sessionStorage.getItem('isrotate1')==1){
-          this.isrotate1=false;//使旋转的消失
-          this.isrotate2=true;//使不旋转的出现
-        }
-      },
-      routeshouye(){
-         eventBus.$emit('myfun','shouye');
-        this.$router.push({  
-           path:'/shouye',
-          });
-      },
       formatter(row, column) {
         return row.nick;
       },
@@ -217,9 +212,20 @@
         this.delVisible=true;
       },
       handleShenhe(index,rows){
-        this.userinfo=rows;  
+        this.userinfo.account=rows.account;  
         this.idx = index;
         this.editVisible=true;
+      },
+         changepage(n){
+     this.page=n;
+     this.current_page=n;
+     this.onSubmit();
+      },
+      qianwang(){
+        if(this.tiaopage<=this.last_page){
+        this.page=this.tiaopage;
+        this.onSubmit();
+        }
       },
       shenhequxiao(){
         this.userinfo.offid='';
@@ -234,42 +240,64 @@
         }); 
           return false;
         }
+         if(!this.userinfo.name){   
+           this.$message({
+           message: '请填写姓名',
+           type: 'error',
+           duration:'1000'
+        }); 
+          return false;
+        }
         this.editVisible=false;
         var vm=this; 
-        vm.$http.post('http://192.168.0.89:3300/web',{
+  
+        vm.$http.post(vm.api1,{
             cmd:"userVerify",
             data:JSON.stringify({
             account:sessionStorage.getItem('account'),
             sessionid:sessionStorage.getItem('sessionid'),
             user_account:vm.userinfo.account,
             user_offlineid:vm.userinfo.offid,
+            user_name:vm.userinfo.name,
             user_type:type,
          })
          }).then((res)=>{
-        console.log(res.data.cmd);
-        console.log('审核中');
-        console.log(res.data.result.status);
+           console.log('审核结果');
+           console.log(res);
+           console.log('审核结果');
+           if(res.data.result.status=='996'){
+            vm.$router.push({
+             path:'/login',
+          });
+           }
         this.tableData.splice(this.idx, 1);
-        this.$message({
+
+      if(res.data.result.status=='100'){
+        vm.$message({
            message: '审核完成',
            type: 'success',
            duration:'1000'
         }); 
+        }
+
+
+
         }).catch(function(err){
         console.log(err);
           });
           this.userinfo.offid='';
+          this.userinfo.name='';
       },
       axios1() {//获取待审核人员列表和网点信息
          var vm=this; 
          var obj={
-              userlist:vm.$http.get('http://www.wug.com/api/userlist',{
+              userlist:vm.$http.get(vm.api2+'/api/userlist',{
               params:{
               type:0,
               usable:0
               }
          }),
-            offlist:vm.$http.post('http://192.168.0.89:3300/web',{
+            offlist:vm.$http.post(vm.api1,{
             cmd:"getOfflineList",
             data:JSON.stringify({
             account:sessionStorage.getItem('account'),
@@ -280,44 +308,96 @@
          };
         return  obj;
       },
+        checksession(){
+        var vm=this;
+         vm.$http.post(vm.api1,{
+         cmd:"checkSession",
+            data:JSON.stringify({
+            account:sessionStorage.getItem('account'),
+            sessionid:sessionStorage.getItem('sessionid'),
+         })
+          }).then((res)=>{
+            if(res.data.result.status=='996'){
+           vm.$router.push({
+           path:'/login',
+          });
+           }
+        }).catch(function(err){
+         console.log(err);
+          });
+      },
+
       getdata(){
+        this.checksession();
+        if(sessionStorage.getItem('warehouses')){
+           this.offlist=JSON.parse(sessionStorage.getItem('warehouses'));
+           this.getuserlist();
+           return false;
+         }
         var vm=this; 
-        vm.$http.all([vm.axios1().offlist,vm.axios1().userlist]).then(vm.$http.spread(function (lateres,res) {
-            console.log(vm.offlist);
-          console.log('请求');
-          console.log(res);
-          console.log('请求1');
-          console.log(lateres);
-        vm.tableData=res.data.data;
-        vm.tableData1=res.data.data;
-        vm.total=res.data.data.length;
-        vm.tableData=vm.tableData.slice(0,vm.pageSize);
+         vm.$http.all([vm.axios1().offlist,vm.axios1().userlist]).then(vm.$http.spread(function (lateres,res) {
+         vm.tableData=res.data.data;
+         vm.last_page=res.data.last_page;
+         vm.current_page=res.data.current_page;        
+         vm.total=res.data.total;
+         if(vm.total<1){
+           vm.istotal=false;
+         }else{
+           vm.istotal=true;
+         }
         vm.offlist=lateres.data.result.list;
-        
+        var warehouses=JSON.stringify(vm.offlist);
+        sessionStorage.setItem('warehouses',warehouses);
         // 两个请求现在都执行完成
   }));
       },
-      soudata(){
+       getuserlist(){
         var vm=this; 
-        vm.$http.get('http://www.wug.com/api/userlist',{
+        vm.$http.get(vm.api2+'/api/userlist',{
            params: vm.soucondi
          }).then((res)=>{
-        vm.tableData=res.data.data;
-        vm.tableData1=res.data.data;
-        vm.total=res.data.data.length;
-        vm.tableData=vm.tableData.slice(0,this.pageSize);
+           vm.tableData=res.data.data;
+           vm.total=res.data.total;
+            if(vm.total<1){
+           vm.istotal=false;
+         }else{
+           vm.istotal=true;
+         }
+         vm.last_page=res.data.last_page;
+         vm.current_page=res.data.current_page; 
         }).catch(function(err){
         console.log(err);
           });
       },
      
       deleteRow(){
+         this.checksession();
+            var vm=this; 
+          vm.$http.post(vm.api1,{
+            cmd:"userDelete",
+            data:JSON.stringify({
+            account:sessionStorage.getItem('account'),
+            sessionid:sessionStorage.getItem('sessionid'),
+            user_account:vm.userinfo.account,
+         })
+         }).then((res)=>{
+        if(res.data.result.status=='996'){
+           vm.$router.push({
+             path:'/login',
+          });
+           }
+
+           if(res.data.result.status=='100'){
+           vms.$message({
+               message: '已删除',
+               type: 'success',
+               duration:'1000'
+         });
+         }
+        }).catch(function(err){
+         console.log(err); 
+          });
         this.tableData.splice(this.idx, 1);
-        this.$message({
-           message: '已删除',
-           type: 'success',
-           duration:'1000'
-        });
         this.total=this.total-1;//每次删除后总条数减1，
         this.delVisible = false;
       },
@@ -325,67 +405,35 @@
         index=index+(this.currentPage-1)*this.pageSize+1;
         return index;
       },
-      handleSizeChange(val) {
-        this.pageSize=val;
-        this.tableData=this.tableData1;//重新获取
-        this.tableData=this.tableData.slice((this.currentPage-1)*this.pageSize,this.currentPage*this.pageSize);
-      },
-      handleCurrentChange(val) {
-        this.currentPage=val;
-        this.tableData=this.tableData1;
-        this.tableData=this.tableData.slice((this.currentPage-1)*this.pageSize,this.currentPage*this.pageSize);
-      },
-   
       onSubmit(){//提交搜索条件
+     
+        this.getuserlist();
+        console.log('打印时间');
+        console.log(this.soudate);
         this.soucondi.nick=this.form.nick;
-        this.soucondi.date1=this.soudate[0];
-        this.soucondi.date2=this.soudate[1];
+        this.soucondi.date=this.soudate;
+        // this.soucondi.date2=this.soudate[1];
         this.soucondi.type=0;
         this.soucondi.userable=0;
-        this.soudata();
+        this.soucondi.page=this.page;
+        this.getuserlist();
       },
     },
       mounted(){
-        this.checkrotate();
+        
     },
       created(){
       this.getdata()
+    },
+    components:{
+      'v-header':Header,
     }
   }
 </script>
 
 <style scoped>
 
-#header .icon, #header .left .icon-menu, #header .right .el-icon-rank {
-    font-size: 24px;
-    transition: 0.2s all ease-in-out;
-    cursor: pointer;
-    color: #606266;
-}
-.icon-menu:before {
-    content: "\e7f4";
-}
-#header{
-    display: -ms-flexbox;
-    display: flex;
-    -ms-flex-align: center;
-    align-items: center;
-    -ms-flex-pack: justify;
-    justify-content: space-between;
-    height: 60px;
-    display: flex;
-    box-shadow: 0 2px 1px 1px rgba(100,100,100,0.1);
-    padding: 0 20px;
-    margin-bottom:10px; 
-}
-#header>div {
-    display: flex;
-    align-items: center;
-}
-.el-breadcrumb{
-    margin-left: 30px;
 
-}
 .tablelist{
     padding-left:10px;
     padding-right: 10px;
@@ -403,11 +451,9 @@
     height: 30px;
     float: left;
 }
-.fa{
-  cursor: pointer;
-}
-.username{
-  cursor: pointer;
-}
+ .el-pagination{
+  
+    margin-top: 30px;
+  }
 
 </style>

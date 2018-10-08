@@ -12,16 +12,16 @@ import qs from 'qs';
 import echarts from 'echarts';
 import MyPlugin from './assets/global';
 
-
 Vue.prototype.$echarts = echarts ;
 Vue.prototype.$qs = qs;
 Vue.prototype.$http = axios;
 Vue.use(MyPlugin);
-
 Vue.use(ElementUI);
-
 Vue.config.productionTip = false
 
+// this.$http.create({
+//   headers: 'Content-Type: application/json'
+// });
 /* eslint-disable no-new */
 new Vue({
   el: '#app',

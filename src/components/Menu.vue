@@ -9,18 +9,17 @@
 <el-menu :default-active="openmenu"  background-color="#495060"
       text-color="#c9cbd0"
       active-text-color="#2d8cf0"  class="el-menu-vertical-demo" @open="handleOpen" @close="handleClose" :collapse="isCollapse" unique-opened>
-      
-      <el-submenu  v-for="item in menulist"  :index="item.index" >
+      <el-submenu  v-for="item in menulist"  :index="item.index+''"  :key="item.index+''">
         <template slot="title">
           <i :class="item.icon"></i>
           <span>{{item.title}}</span>
         </template>
-         <el-menu-item v-for="it in item.menu"  :index="it.index" @click="choose(it.url,it.index)">{{it.title}}</el-menu-item>
+         <el-menu-item v-for="it in item.menu"  :index="it.index+''"  :key="it.index+''" @click.native="choose(it.url,it.index,item.title,it.title)">{{it.title}}</el-menu-item>
      </el-submenu>
-     <el-menu-item  v-for="item in othermenu"  :index="item.index"  @click="choose(item.url,item.index)">
+     <!-- <el-menu-item  v-for="item in othermenu"  :index="item.index"  @click="choose(item.url,item.index)">
         <i :class="item.icon"></i>
         <span slot="title">{{item.title}}</span>
-      </el-menu-item>
+      </el-menu-item> -->
 </el-menu>
 </div>
 </template>
@@ -35,6 +34,8 @@
           isCollapse: false,
           logowidth:"150px",
           logourl:require('../assets/shouye.png'),
+          place1:'',
+          place2:'',
           menulist:[
         {
           index: 1,
@@ -43,7 +44,7 @@
           open:'no',
           menu: [
             {'index':'1-1','title':'订单列表','url':'/warehouse'},
-            {'index':'1-2','title':'选项3','url':'/shouye'}
+            // {'index':'1-2','title':'选项3','url':'/shouye'}
             ]
         },
         {
@@ -67,44 +68,44 @@
             ]
         },
       ],
-      othermenu:[
-        {
-          index:7,
-          title:'图表',
-          icon:'el-icon-picture',
-          open:'no',
-          url:'chart',
-        },
-        {
-          index:8,
-          title:'登录',
-          icon:'fa fa-bar-chart',
-          open:'no',
-          url:'/testlogin',
+      // othermenu:[
+      //   {
+      //     index:7,
+      //     title:'图表',
+      //     icon:'el-icon-picture',
+      //     open:'no',
+      //     url:'chart',
+      //   },
+      //   {
+      //     index:8,
+      //     title:'登录',
+      //     icon:'fa fa-bar-chart',
+      //     open:'no',
+      //     url:'/testlogin',
 
-        },
-        {
-          index:9,
-          title:'注册',
-          icon:'el-icon-tickets',
-          open:'no',
-          url:'/testregist',
-        },
-        {
-          index:10,
-          title:'测试',
-          icon:'el-icon-tickets',
-          open:'no',
-          url:'/test',
-        },
-        {
-          index:11,
-          title:'仓库',
-          icon:'el-icon-tickets',
-          open:'no',
-          url:'/warehouse',
-        }
-      ]
+      //   },
+      //   {
+      //     index:9,
+      //     title:'注册',
+      //     icon:'el-icon-tickets',
+      //     open:'no',
+      //     url:'/testregist',
+      //   },
+      //   {
+      //     index:10,
+      //     title:'测试',
+      //     icon:'el-icon-tickets',
+      //     open:'no',
+      //     url:'/test',
+      //   },
+      //   {
+      //     index:11,
+      //     title:'仓库',
+      //     icon:'el-icon-tickets',
+      //     open:'no',
+      //     url:'/warehouse',
+      //   }
+      // ]
 
       }
     },
@@ -127,7 +128,7 @@
                  if(message=='close'){
                    this.isCollapse=true;
                    this.logowidth="30px";
-                   this.logourl=require('../assets/11.png');
+                   this.logourl=require('../assets/shouye.png');
                  }
                   if(message=='open'){
                    this.isCollapse=false;
@@ -140,12 +141,18 @@
                  }
             })
       },
-     choose(url,index){
-     sessionStorage.setItem('openmenu',index);
+     choose(url,index,place1,place2){
+        var message=[place1,place2];
+        eventBus.$emit('menufun',message);
+        sessionStorage.setItem('place1',place1);
+        sessionStorage.setItem('place2',place2);
+        sessionStorage.setItem('openmenu',index);
         this.$router.push({
            path:url,
           });
-      }
+      },
+   
+     
     },
     activated(){
     

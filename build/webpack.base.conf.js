@@ -78,5 +78,9 @@ module.exports = {
     net: 'empty',
     tls: 'empty',
     child_process: 'empty'
+  },
+    devServer: {
+    host: '0.0.0.0',
+    disableHostCheck: true
   }
 }
